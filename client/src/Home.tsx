@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "./components/Header";
 import TextInput from "./components/TextInput";
+import SelectInput from "./components/SelectInput";
 import Button from "./components/Button";
 
 const Home = () => (
@@ -15,9 +16,9 @@ const Home = () => (
         <a href="https://enigma.co/">Enigma Protocol</a>
       </p> */}
       </div>
-      <TextInput label="Select Task" />
-      <TextInput label="Hourly Rate" />
-      <TextInput label="Total Hours" />
+      <SelectInput label="Select Task" options={["option1", "option2"]} />
+      <TextInput label="Hourly Rate" number={true} />
+      <TextInput label="Total Hours" number={true} />
     </div>
     <Link href={`/result`} scroll={false}>
       <Button>GO</Button>
@@ -59,4 +60,4 @@ const Home = () => (
   </div>
 );
 
-export default Home
+export default Home;

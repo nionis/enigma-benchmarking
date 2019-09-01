@@ -32,17 +32,27 @@ const Upload = () => (
           </div>
         </div>
         <div className="side">
+          <div className="exampleText">Example</div>
           <img
             src="/static/images/spreadsheet.jpg"
             alt="spreadsheet"
             // width="50"
-            style={{ borderRadius: "10px", height: "9vh", overflow: "hidden" }}
+            style={{
+              borderRadius: "10px",
+              height: "9vh",
+              overflow: "hidden",
+              cursor: "pointer"
+            }}
           />
         </div>
       </div>
     </div>
     <Button>GO</Button>
     <style jsx>{`
+      .exampleText {
+        font-size: calc(12px + 0.3vw);
+        margin-bottom: 2vh;
+      }
       .middle {
         justify-content: space-around;
         align-items: center;
@@ -53,7 +63,7 @@ const Upload = () => (
         justify-content: center;
         align-items: center;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         width: 20vw;
       }
       .fileText {
@@ -102,6 +112,7 @@ const Upload = () => (
         align-items: center;
         display: flex;
         margin-top: 2vh;
+        cursor: pointer;
       }
       .border {
         border: 1px dashed rgba(255, 255, 255, 0.51);
@@ -136,4 +147,4 @@ const Upload = () => (
   </div>
 );
 
-export default Upload
+export default Upload;

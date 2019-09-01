@@ -8,14 +8,19 @@ interface IHeader {
 
 const Header = ({ homepage }: IHeader) => (
   <div className="header">
-    <img src="/static/images/enigma_logo.png" alt="Enigma Logo" width="125" />
+    <img
+      src="/static/images/enigma_logo.png"
+      alt="Enigma Logo"
+      width="125"
+      style={{ cursor: "pointer" }}
+    />
     <Link href={homepage ? `/upload` : `/`} scroll={false}>
       <div style={{ width: "50px", height: "50px" }}>
         {homepage ? (
           <SvgIcon clickable={true} icon="add" />
         ) : (
-            <SvgIcon clickable={true} icon="clear" />
-          )}
+          <SvgIcon clickable={true} icon="clear" />
+        )}
       </div>
     </Link>
 

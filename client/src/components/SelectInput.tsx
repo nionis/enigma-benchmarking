@@ -1,14 +1,20 @@
 import { ReactChildren } from "react";
 
-interface ITextInput {
+interface ISelectInput {
   label: string;
-  number?: boolean;
+  options: string[];
 }
 
-const TextInput = ({ label, number }: ITextInput) => (
+const SelectInput = ({ label, options }: ISelectInput) => (
   <div className="textInput">
     <div className="label">{label}</div>
-    <input className="text" name="address" type={number ? "number" : "text"} />
+    <select className="select" name="options">
+      {options.map(option => (
+        <option className="option" value={option} key={option}>
+          {option}
+        </option>
+      ))}
+    </select>
 
     <style jsx>{`
       .textInput {
@@ -25,14 +31,15 @@ const TextInput = ({ label, number }: ITextInput) => (
         display: flex;
         font-size: calc(12px + 0.6vw);
       }
-      .text {
+      .select {
         height: 4vh;
         width: 40vh;
         border-radius: 12px;
         border: 1px solid #000000;
+        cursor: pointer;
       }
     `}</style>
   </div>
 );
 
-export default TextInput;
+export default SelectInput;
