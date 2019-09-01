@@ -30,6 +30,7 @@ pub struct DataSet {
 
 pub struct Contract;
 
+// TODO: confirm if this is needed
 // dynamically create a dataset's state key
 // in order to optimize serialization / deserialization
 fn create_dataset_key(id: U256) -> String {
@@ -67,6 +68,7 @@ impl ContractInterface for Contract {
     }
   }
 
+  // TODO: check if there is a better way of importing args
   #[no_mangle]
   fn add_dataset(name: String, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> () {
     let datasets_length = Self::get_datasets_length();
@@ -99,6 +101,7 @@ impl ContractInterface for Contract {
     );
   }
 
+  // TODO: check if this is correctly done
   #[no_mangle]
   fn calc_percentile(id: U256, _total_hours: U256, rate: U256) -> U256 {
     let dataset = Self::get_dataset(id);

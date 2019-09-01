@@ -1,1 +1,7 @@
 design: https://www.figma.com/file/6wFGj2toQDq8lAdI46i42L/enigma-non-fungable-token-lottery
+
+todo:
+- button / links should have correct cursor
+- "example" text next to spreadsheet icon
+- select task should be select element
+- inputs for numbers should be number inputs
