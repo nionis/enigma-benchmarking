@@ -1,26 +1,30 @@
 import Link from "next/link";
-import Header from "./components/Header";
 import Button from "./components/Button";
 
-const Result = () => (
-  <div className="container">
-    <Header homepage={false} />
+interface IResultProps {
+  name?: string,
+  totalHours?: string,
+  hourlyRate?: string,
+  percentile?: string
+}
 
+const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
+  <div className="container">
     <div className="body">
       <div className="title">Results</div>
       <div className="bar">
         <div className="percentile" />
       </div>
-      <div className="title">Your quote is in the 99th percentile</div>
+      <div className="title">Your quote is in the {percentile}th percentile</div>
 
       <div className="quoteInfo">
         {" "}
-        <div className="text">Back-end Developer</div>
-        <div className="text">$72/hour</div>
-        <div className="text">120 hours total</div>
+        <div className="text">{name}</div>
+        <div className="text">{hourlyRate}/hour</div>
+        <div className="text">{totalHours} hours total</div>
       </div>
     </div>
-    <Link href={`/`} scroll={false}>
+    <Link href={`/`} prefetch>
       <Button>Done</Button>
     </Link>
     <style jsx>{`

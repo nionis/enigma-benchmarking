@@ -4,7 +4,10 @@ import { isSSR } from "../utils";
 
 const Model = types
   .model("Enigma", {
-    isInstalled: types.maybeNull(types.boolean)
+    isInstalled: types.maybeNull(types.boolean),
+    enigmaAddress: types.maybeNull(types.string),
+    enigmaTokenAddress: types.maybeNull(types.string),
+    enigmaContractAddress: types.maybeNull(types.string),
   })
   .actions(self => {
     let enigma: any | undefined;
@@ -40,11 +43,17 @@ const Model = types
         import('../../../build/enigma_contracts/EnigmaToken.json').then(d => d.default),
       ]);
 
+      self.enigmaAddress = EnigmaContract.networks[web3Store.networkId].address;
+      self.enigmaTokenAddress = EnigmaTokenContract.networks[web3Store.networkId].address;
+      // FIXME: where can I get this from other than text/benchmarking.txt
+      self.enigmaContractAddress = "0x88987af7d35eabcad95915b93bfd3d2bc3308f06b7197478b0dfca268f0497dc";
+
       const enigma = new Enigma(
         web3Store.getWeb3(),
         EnigmaContract.networks[web3Store.networkId].address,
         EnigmaTokenContract.networks[web3Store.networkId].address,
-        'http://localhost:3346',
+        // FIXME: dynamic url
+        'http://192.168.184.210:3346',
         {
           gas: 4712388,
           gasPrice: 100000000000,
@@ -56,6 +65,7 @@ const Model = types
 
       self.setEnigma(enigma);
       self.isInstalled = true;
+      console.log("Enigma Initialized")
     })
   }))
 

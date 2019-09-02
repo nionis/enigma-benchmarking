@@ -53,6 +53,21 @@ const compute = async ({ fn, args, userAddr, contractAddr }) => {
 
 const rawAddrToStr = raw => web3.utils.toChecksumAddress(`0x${raw.slice(24, 64)}`);
 const rawUint256ToStr = raw => String(parseInt(raw, 16));
+const rawHexToStr = raw => web3.utils.hexToString(`0x${raw}`);
+
+const getDatasetsInfo = output => {
+  const rawOutput = output.match(/.{1,64}/g);
+  const trimmedLeft = rawOutput.splice(3, rawOutput.length);
+  const arraySize = (trimmedLeft.length - 1) / 2;
+
+  const ids = trimmedLeft.slice(0, arraySize);
+  const names = trimmedLeft.slice(arraySize + 1, trimmedLeft.length);
+
+  return {
+    ids: ids.map(rawUint256ToStr),
+    names: names.map(rawHexToStr),
+  }
+}
 
 contract("benchmarking", accounts => {
   const [owner, user1, user2] = accounts
@@ -89,16 +104,16 @@ contract("benchmarking", accounts => {
       args: "",
       userAddr: owner,
       contractAddr: secretContractAddr
-    }).catch(console.error)
+    })
 
     expect(rawUint256ToStr(result.decryptedOutput)).to.equal("0");
   });
 
   it('add dataset', async () => {
     await compute({
-      fn: "add_dataset(string, uint256[], uint256[], uint256[])",
+      fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
       args: [
-        ["server costs", "string"],
+        [web3.utils.stringToHex("server costs"), "bytes32"],
         [[1, 2, 3, 4, 5], "uint256[]"],
         [[10, 20, 30, 40, 50], "uint256[]"],
         [[5, 5, 10, 10, 20], "uint256[]"]
@@ -115,6 +130,20 @@ contract("benchmarking", accounts => {
     })
 
     expect(rawUint256ToStr(result.decryptedOutput)).to.equal("1");
+  });
+
+  it('get dataset info', async () => {
+    const result = await compute({
+      fn: "get_datasets_info()",
+      args: "",
+      userAddr: owner,
+      contractAddr: secretContractAddr
+    })
+
+    const { ids, names } = getDatasetsInfo(result.decryptedOutput)
+
+    expect(ids[0]).to.equal("1");
+    expect(names[0]).to.equal("server costs");
   });
 
   it('get percentile of rate 20', async () => {

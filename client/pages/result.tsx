@@ -1,3 +1,3 @@
 import Result from "../src/Result";
 
-export default Result
+export default Result;

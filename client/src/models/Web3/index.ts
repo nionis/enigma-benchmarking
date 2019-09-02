@@ -70,6 +70,9 @@ const Model = types
         self.isInstalled = false;
         return;
       }
+      if (!self.isInstalled) {
+        console.log("Web3 Initialized")
+      }
 
       self.isInstalled = true;
       self.setWeb3(web3);

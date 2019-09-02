@@ -1,8 +1,28 @@
-import React from "react";
 import App, { Container } from "next/app";
 import Head from "next/head";
+import React from "react";
+import Header from "../src/components/Header"
 
 class MyApp extends App {
+  static async getInitialProps({ ctx }) {
+    const {
+      name,
+      totalHours,
+      hourlyRate,
+      percentile
+    } = ctx.query;
+
+    const pageProps = {
+      path: ctx.asPath,
+      name,
+      totalHours,
+      hourlyRate,
+      percentile
+    };
+
+    return { pageProps };
+  }
+
   render() {
     const { Component, pageProps } = this.props;
 
@@ -16,9 +36,10 @@ class MyApp extends App {
           />
         </Head>
 
+        <Header path={pageProps.path} />
         <Component {...pageProps} />
 
-        <style global jsx>{`
+        <style jsx global>{`
           body {
             background-color: #001c3d;
             margin: none;

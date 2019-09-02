@@ -1,13 +1,15 @@
-import Link from "next/link";
-import Header from "./components/Header";
+import { unprotect } from "mobx-state-tree"
+import { observer } from "mobx-react"
 import TextInput from "./components/TextInput";
 import SelectInput from "./components/SelectInput";
 import Button from "./components/Button";
+import HomeModel from "./models/Home"
 
-const Home = () => (
+const homeStore = HomeModel.create();
+unprotect(homeStore);
+
+const Home = observer(() => (
   <div className="container">
-    <Header homepage={true} />
-
     <div className="body">
       <div className="title">
         Submit Your Quote
@@ -16,13 +18,33 @@ const Home = () => (
         <a href="https://enigma.co/">Enigma Protocol</a>
       </p> */}
       </div>
-      <SelectInput label="Select Task" options={["option1", "option2"]} />
-      <TextInput label="Hourly Rate" number={true} />
-      <TextInput label="Total Hours" number={true} />
+      <SelectInput
+        label="Select Task"
+        options={{
+          ids: homeStore.ids,
+          values: homeStore.names
+        }}
+        selected={homeStore.selected}
+        onSelect={e => {
+          console.log(e.target.value)
+          homeStore.selected = e.target.value
+        }}
+      />
+      <Button onClick={homeStore.getNames}>fetch</Button>
+      <TextInput
+        label="Hourly Rate"
+        type="number"
+        value={homeStore.hourlyRate}
+        onChange={e => homeStore.hourlyRate = e.target.value}
+      />
+      <TextInput
+        label="Total Hours"
+        type="number"
+        value={homeStore.totalHours}
+        onChange={e => homeStore.totalHours = e.target.value}
+      />
     </div>
-    <Link href={`/result`} scroll={false}>
-      <Button>GO</Button>
-    </Link>
+    <Button disabled={!homeStore.canCalcPercentile} onClick={homeStore.calcPercentile}>GO</Button>
 
     <style jsx>{`
       .body {
@@ -58,6 +80,6 @@ const Home = () => (
       }
     `}</style>
   </div>
-);
+))
 
 export default Home;

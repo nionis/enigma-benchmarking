@@ -1,17 +1,20 @@
-import { ReactChildren } from "react";
-
-interface ISelectInput {
+interface ISelectInputProps {
   label: string;
-  options: string[];
+  options: {
+    ids: string[],
+    values: string[]
+  },
+  selected?: string;
+  onSelect?: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-const SelectInput = ({ label, options }: ISelectInput) => (
+const SelectInput = ({ label, options, selected, onSelect }: ISelectInputProps) => (
   <div className="textInput">
     <div className="label">{label}</div>
-    <select className="select" name="options">
-      {options.map(option => (
-        <option className="option" value={option} key={option}>
-          {option}
+    <select className="select" name="options" value={selected} onChange={onSelect}>
+      {options.ids.map((id, index) => (
+        <option className="option" value={id} key={id}>
+          {options.values[index]}
         </option>
       ))}
     </select>

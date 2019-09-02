@@ -1,53 +1,83 @@
+import { useCallback } from "react"
+import { useDropzone } from 'react-dropzone'
+import { observer } from "mobx-react"
 import { ArrowDownward } from "@material-ui/icons";
-import Header from "./components/Header";
+import { FileWithPath } from "file-selector";
 import TextInput from "./components/TextInput";
 import Button from "./components/Button";
+import UploadModel, { AcceptedFormatsList } from "./models/Upload"
 
-const arrowStyle = {
-  fill: "rgba(255, 255, 255, 0.51)",
-  width: "7vw",
-  height: "12vh"
-};
+const uploadStore = UploadModel.create();
 
-const Upload = () => (
+const MyDropzone = observer(() => {
+  const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+    if (acceptedFiles.length === 0) return;
+
+    const file = acceptedFiles[0];
+    uploadStore.setFile(file);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: 'application/json, .csv',
+  });
+
+  return (
+    <div className="fileUpload" {...getRootProps()}>
+      <div className="border">
+        <div className="arrowContainer">
+          <div className="sidebars" />
+          <ArrowDownward style={{
+            fill: "rgba(255, 255, 255, 0.51)",
+            width: "7vw",
+            height: "12vh"
+          }} />
+          <div className="sidebars" />
+          <input {...getInputProps()} />
+        </div>
+        <div className="line" />
+        <div className="fileText">Please select a file</div>
+      </div>
+    </div>
+  )
+})
+
+const Upload = observer(() => (
   <div className="container">
-    <Header homepage={false} />
-
     <div className="body">
       <div className="title">Upload Data</div>
-      <TextInput label="Data Title" />
+      <TextInput
+        label="Data Title"
+        value={uploadStore.name}
+        onChange={e => uploadStore.setName(e.target.value)}
+      />
       <div className="text">Import a File</div>
-      <div className="smallText">(.json, etc, etc, etc)</div>
+      <div className="smallText">({AcceptedFormatsList.join(", ")})</div>
       <div className="middle">
         <div className="side" />
-        <div className="fileUpload">
-          <div className="border">
-            <div className="arrowContainer">
-              <div className="sidebars" />
-              <ArrowDownward style={arrowStyle} />
-              <div className="sidebars" />
-            </div>
-            <div className="line" />
-            <div className="fileText">Please select a file</div>
-          </div>
-        </div>
+        <MyDropzone />
         <div className="side">
           <div className="exampleText">Example</div>
-          <img
-            src="/static/images/spreadsheet.jpg"
-            alt="spreadsheet"
-            // width="50"
-            style={{
-              borderRadius: "10px",
-              height: "9vh",
-              overflow: "hidden",
-              cursor: "pointer"
-            }}
-          />
+          <a
+            href="https://docs.google.com/spreadsheets/d/1Y7L5oxdPaHkUHjywM9vkALWlJZ_yeLmDYSmADO4zWfg/edit?usp=sharing"
+            target="_blank"
+          >
+            <img
+              src="/static/images/spreadsheet.jpg"
+              alt="spreadsheet"
+              style={{
+                borderRadius: "10px",
+                height: "9vh",
+                overflow: "hidden",
+                cursor: "pointer"
+              }}
+            />
+          </a>
         </div>
       </div>
     </div>
-    <Button>GO</Button>
+    <Button onClick={uploadStore.upload} disabled={!uploadStore.canUpload}>GO</Button>
+
     <style jsx>{`
       .exampleText {
         font-size: calc(12px + 0.3vw);
@@ -145,6 +175,6 @@ const Upload = () => (
       }
     `}</style>
   </div>
-);
+))
 
 export default Upload;

@@ -1,15 +1,14 @@
-import { ReactChildren, Children } from "react";
 import TextInput from "./TextInput";
 
-interface IForm {
-  labels: string[];
+interface IFormProps {
   children?: any;
+  labels: string[];
 }
 
-const Form = ({ labels, children }: IForm) => (
+const Form = ({ children, labels }: IFormProps) => (
   <div className="form">
     <div className="inputs">
-      {labels.map(function returnInput(label) {
+      {labels.map((label) => {
         return <TextInput label={label} key={label} />;
       })}
     </div>

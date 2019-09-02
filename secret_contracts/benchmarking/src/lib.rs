@@ -1,3 +1,8 @@
+/*
+  # Storage
+  We do not store all date on a single HashMap, instead we store every DataSet seperately.
+  This is so we can safe gas cost, and avoid unnecessary serializations / deserializations.
+*/
 #![no_std]
 #![allow(unused_attributes)]
 
@@ -24,15 +29,14 @@ pub struct DataPoint {
 #[derive(Serialize, Deserialize)]
 pub struct DataSet {
   id: U256,
-  name: String,
+  name: H256,
   datapoints: Vec<DataPoint>,
 }
 
+type DataSetsInfo = (Vec<U256>, Vec<H256>);
+
 pub struct Contract;
 
-// TODO: confirm if this is needed
-// dynamically create a dataset's state key
-// in order to optimize serialization / deserialization
 fn create_dataset_key(id: U256) -> String {
   let mut key = String::from(DATASET);
   key.push_str(&id.to_string());
@@ -55,7 +59,8 @@ impl Contract {
 #[pub_interface]
 pub trait ContractInterface {
   fn get_datasets_length() -> U256;
-  fn add_dataset(name: String, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> ();
+  fn get_datasets_info() -> DataSetsInfo;
+  fn add_dataset(name: H256, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> ();
   fn calc_percentile(id: U256, _total_hours: U256, rate: U256) -> U256;
 }
 
@@ -68,9 +73,27 @@ impl ContractInterface for Contract {
     }
   }
 
-  // TODO: check if there is a better way of importing args
   #[no_mangle]
-  fn add_dataset(name: String, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> () {
+  fn get_datasets_info() -> DataSetsInfo {
+    let datasets_length = Self::get_datasets_length();
+    let mut ids: Vec<U256> = Vec::new();
+    let mut names: Vec<H256> = Vec::new();
+
+    for n in 0..U256::as_usize(&datasets_length) {
+      let dataset = Self::get_dataset(U256::from(n + 1));
+
+      ids.push(dataset.id);
+      names.push(dataset.name);
+    }
+
+    return (
+      ids,
+      names
+    );
+  }
+
+  #[no_mangle]
+  fn add_dataset(name: H256, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> () {
     let datasets_length = Self::get_datasets_length();
     let id = datasets_length.checked_add(U256::from(1)).unwrap();
     let key = &create_dataset_key(id);

@@ -1,21 +1,21 @@
 import { CSSProperties } from "react";
 
-interface IButton {
+interface IButtonProps {
   children?: any;
-  onClick?: any;
+  onClick?: () => any;
   disabled?: boolean;
   style?: CSSProperties;
 }
 
-const Button = ({ children, onClick, disabled, style }: IButton) => (
-  <div>
+const Button = ({ children, onClick, disabled, style }: IButtonProps) => (
+  <>
     <button onClick={onClick} style={style} disabled={disabled}>
       {children}
     </button>
 
     <style jsx>{`
       button {
-        background: #e72a9b;
+        background: ${!disabled ? "#e72a9b" : "#634e5a"};
         font-size: 2vh;
         width: 10vh;
         height: 4vh;
@@ -28,7 +28,7 @@ const Button = ({ children, onClick, disabled, style }: IButton) => (
         cursor: pointer;
       }
     `}</style>
-  </div>
+  </>
 );
 
 export default Button;

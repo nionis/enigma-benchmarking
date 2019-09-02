@@ -1,14 +1,14 @@
-import { ReactChildren } from "react";
-
 interface ITextInput {
   label: string;
-  number?: boolean;
+  value?: string;
+  type?: "text" | "number"
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const TextInput = ({ label, number }: ITextInput) => (
+const TextInput = ({ label, type = "text", value, onChange }: ITextInput) => (
   <div className="textInput">
     <div className="label">{label}</div>
-    <input className="text" name="address" type={number ? "number" : "text"} />
+    <input className="text" name="address" type={type} value={value} onChange={onChange} />
 
     <style jsx>{`
       .textInput {
