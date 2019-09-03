@@ -1,6 +1,5 @@
 import { unprotect } from "mobx-state-tree";
 import { observer } from "mobx-react";
-import MetaMask from "./components/MetaMask";
 import TextInput from "./components/TextInput";
 import SelectInput from "./components/SelectInput";
 import Button from "./components/Button";
@@ -12,8 +11,6 @@ unprotect(homeStore);
 
 const Home = observer(() => (
   <div className="container">
-    <MetaMask />
-
     <div className="body">
       <div className="title">
         Submit Your Quote
@@ -48,13 +45,13 @@ const Home = observer(() => (
       <TextInput
         label="Hourly Rate"
         type="number"
-        value={homeStore.hourlyRate}
+        value={homeStore.hourlyRate || ""}
         onChange={e => (homeStore.hourlyRate = e.target.value)}
       />
       <TextInput
         label="Total Hours"
         type="number"
-        value={homeStore.totalHours}
+        value={homeStore.totalHours || ""}
         onChange={e => (homeStore.totalHours = e.target.value)}
       />
     </div>

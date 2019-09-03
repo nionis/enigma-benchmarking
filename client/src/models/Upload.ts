@@ -25,14 +25,20 @@ const storeAsJSON = (file: FileWithPath, ext: keyof typeof AcceptedFormatsEnum):
     reader.readAsText(file, "UTF-8");
 
     reader.onload = () => {
-      if (ext === "csv") {
-        fileContents = csvToJson(reader.result, ",");
-      } else {
-        fileContents = JSON.parse(reader.result as string);
-      }
+      try {
+        if (ext === "csv") {
+          fileContents = csvToJson(reader.result, ",");
+        } else {
+          fileContents = JSON.parse(reader.result as string);
+        }
 
-      resolve(true);
+        resolve(true);
+      } catch (err) {
+        console.error(err);
+        resolve(false);
+      }
     }
+
     reader.onerror = () => {
       resolve(false);
     }
@@ -68,11 +74,27 @@ const Model = types.model("Upload", {
       }
       self.input_status = "ACCEPTED";
 
-      // is file contents ok
+      // store file
       if (!(yield storeAsJSON(file, ext))) {
         self.reader_status = "REJECTED"
         return;
       }
+
+      // validate file
+      const okLength = fileContents.length <= 1000;
+      const okValues = fileContents.every(o => (
+        o.ids &&
+        !isNaN(Number(o.ids)) &&
+        o.total_hours &&
+        !isNaN(Number(o.total_hours)) &&
+        o.rates &&
+        !isNaN(Number(o.rates))
+      ));
+      if (!okLength || !okValues) {
+        self.reader_status = "REJECTED";
+        return;
+      }
+
       self.reader_status = "ACCEPTED";
 
       if (self.name === "") {
