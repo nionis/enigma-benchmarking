@@ -1,11 +1,11 @@
-import { useCallback } from "react"
-import { useDropzone } from 'react-dropzone'
-import { observer } from "mobx-react"
+import { useCallback } from "react";
+import { useDropzone } from "react-dropzone";
+import { observer } from "mobx-react";
 import { ArrowDownward } from "@material-ui/icons";
 import { FileWithPath } from "file-selector";
 import TextInput from "./components/TextInput";
 import Button from "./components/Button";
-import UploadModel, { AcceptedFormatsList } from "./models/Upload"
+import UploadModel, { AcceptedFormatsList } from "./models/Upload";
 
 const uploadStore = UploadModel.create();
 
@@ -19,7 +19,7 @@ const MyDropzone = observer(() => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: 'application/json, .csv',
+    accept: "application/json, .csv"
   });
 
   return (
@@ -27,20 +27,68 @@ const MyDropzone = observer(() => {
       <div className="border">
         <div className="arrowContainer">
           <div className="sidebars" />
-          <ArrowDownward style={{
-            fill: "rgba(255, 255, 255, 0.51)",
-            width: "7vw",
-            height: "12vh"
-          }} />
+          <ArrowDownward
+            style={{
+              fill: "rgba(255, 255, 255, 0.51)",
+              width: "7vw",
+              height: "12vh"
+            }}
+          />
           <div className="sidebars" />
           <input {...getInputProps()} />
         </div>
         <div className="line" />
         <div className="fileText">Please select a file</div>
       </div>
+      <style jsx>{`
+        .fileText {
+          font-size: calc(12px + 0.3vw);
+          color: rgba(255, 255, 255, 0.51);
+        }
+        .arrowContainer {
+          justify-content: space-between;
+          align-items: flex-end;
+          display: flex;
+          flex-direction: row;
+          width: 14vw;
+        }
+        .line {
+          background: rgba(255, 255, 255, 0.51);
+          height: 1vh;
+          width: 14vw;
+          margin-bottom: 2vh;
+        }
+        .sidebars {
+          background: rgba(255, 255, 255, 0.51);
+          height: 4vh;
+          width: 1vh;
+        }
+
+        .fileUpload {
+          background: rgba(0, 62, 134, 0.2);
+          border-radius: 20px;
+          height: 25vh;
+          width: 65vh;
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          margin-top: 2vh;
+          cursor: pointer;
+        }
+        .border {
+          border: 1px dashed rgba(255, 255, 255, 0.51);
+          height: 23vh;
+          width: 63vh;
+          border-radius: 15px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+      `}</style>
     </div>
-  )
-})
+  );
+});
 
 const Upload = observer(() => (
   <div className="container">
@@ -80,7 +128,11 @@ const Upload = observer(() => (
       onClick={uploadStore.upload}
       disabled={!uploadStore.canUpload}
       loading={uploadStore.transaction.status === "PENDING"}
-      undertext={uploadStore.transaction.status === "FAILURE" ? "Something went bad, please retry" : ""}
+      undertext={
+        uploadStore.transaction.status === "FAILURE"
+          ? "Something went bad, please retry"
+          : ""
+      }
     >
       GO
     </Button>
@@ -101,29 +153,8 @@ const Upload = observer(() => (
         align-items: center;
         display: flex;
         flex-direction: column;
+
         width: 20vw;
-      }
-      .fileText {
-        font-size: calc(12px + 0.3vw);
-        color: rgba(255, 255, 255, 0.51);
-      }
-      .arrowContainer {
-        justify-content: space-between;
-        align-items: flex-end;
-        display: flex;
-        flex-direction: row;
-        width: 14vw;
-      }
-      .line {
-        background: rgba(255, 255, 255, 0.51);
-        height: 1vh;
-        width: 14vw;
-        margin-bottom: 2vh;
-      }
-      .sidebars {
-        background: rgba(255, 255, 255, 0.51);
-        height: 4vh;
-        width: 1vh;
       }
       .text {
         margin-top: 4vh;
@@ -139,27 +170,6 @@ const Upload = observer(() => (
         display: flex;
         flex-direction: column;
         margin-top: 8vh;
-      }
-      .fileUpload {
-        background: rgba(0, 62, 134, 0.2);
-        border-radius: 20px;
-        height: 25vh;
-        width: 65vh;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        margin-top: 2vh;
-        cursor: pointer;
-      }
-      .border {
-        border: 1px dashed rgba(255, 255, 255, 0.51);
-        height: 23vh;
-        width: 63vh;
-        border-radius: 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
       }
       .title {
         display: flex;
@@ -182,6 +192,6 @@ const Upload = observer(() => (
       }
     `}</style>
   </div>
-))
+));
 
 export default Upload;

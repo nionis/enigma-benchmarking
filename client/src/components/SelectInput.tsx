@@ -1,19 +1,31 @@
 interface ISelectInputProps {
   label: string;
   options: {
-    ids: string[],
-    values: string[]
-  },
+    ids: string[];
+    values: string[];
+  };
   selected?: string;
-  onSelect?: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  onSelect?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const SelectInput = ({ label, options, selected, onSelect }: ISelectInputProps) => (
+const SelectInput = ({
+  label,
+  options,
+  selected,
+  onSelect
+}: ISelectInputProps) => (
   <div className="textInput">
     <div className="label">{label}</div>
-    <select className="select" name="options" value={selected} onChange={onSelect}>
+    <select
+      className="select"
+      name="options"
+      value={selected}
+      onChange={onSelect}
+    >
       {options.ids.length === 0 ? (
-        <option value="" disabled selected={!selected}>Please fetch tasks</option>
+        <option value="" disabled selected={!selected}>
+          Please fetch tasks
+        </option>
       ) : null}
       {options.ids.map((id, index) => (
         <option className="option" value={id} key={id}>
@@ -30,7 +42,7 @@ const SelectInput = ({ label, options, selected, onSelect }: ISelectInputProps) 
         align-items: center;
       }
       .label {
-        margin-top: 5vh;
+        margin-top: 3vh;
         margin-bottom: 2vh;
         width: 25vh;
         justify-content: center;

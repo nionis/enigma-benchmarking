@@ -1,14 +1,20 @@
 interface ITextInput {
   label: string;
   value?: string;
-  type?: "text" | "number"
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  type?: "text" | "number";
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextInput = ({ label, type = "text", value, onChange }: ITextInput) => (
   <div className="textInput">
     <div className="label">{label}</div>
-    <input className="text" name="address" type={type} value={value} onChange={onChange} />
+    <input
+      className="text"
+      name="address"
+      type={type}
+      value={value}
+      onChange={onChange}
+    />
 
     <style jsx>{`
       .textInput {
@@ -30,6 +36,7 @@ const TextInput = ({ label, type = "text", value, onChange }: ITextInput) => (
         width: 40vh;
         border-radius: 12px;
         border: 1px solid #000000;
+        padding-left: 1vh;
       }
     `}</style>
   </div>

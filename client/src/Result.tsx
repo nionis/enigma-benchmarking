@@ -1,11 +1,12 @@
 import Link from "next/link";
 import Button from "./components/Button";
+import { getNumberWithOrdinal } from "./utils";
 
 interface IResultProps {
-  name?: string,
-  totalHours?: string,
-  hourlyRate?: string,
-  percentile?: string
+  name?: string;
+  totalHours?: string;
+  hourlyRate?: string;
+  percentile?: string;
 }
 
 const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
@@ -15,7 +16,10 @@ const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
       <div className="bar">
         <div className="percentile" />
       </div>
-      <div className="title">Your quote is in the {percentile}th percentile</div>
+      <div className="title">
+        Your quote is in the {getNumberWithOrdinal(Number(percentile))}{" "}
+        percentile
+      </div>
 
       <div className="quoteInfo">
         {" "}
@@ -54,7 +58,7 @@ const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
         height: 8vh;
         width: 0.5vh;
         background: #e72a9b;
-        margin-left: 55vw;
+        margin-left: ${(Number(percentile) * 75) / 100}vw;
       }
       .body {
         height: 65vh;
@@ -88,4 +92,4 @@ const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
   </div>
 );
 
-export default Result
+export default Result;

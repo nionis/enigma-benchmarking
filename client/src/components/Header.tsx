@@ -1,6 +1,6 @@
 import Link from "next/link";
 import SvgIcon from "./SvgIcon";
-import { isSSR } from "../utils"
+import { isSSR } from "../utils";
 
 interface IHeaderProps {
   path?: string;
@@ -8,7 +8,8 @@ interface IHeaderProps {
 
 const Header = ({ path }: IHeaderProps) => {
   const pathIsHomepage = path === "/";
-  const atHomepage = pathIsHomepage || (!isSSR && window.location.pathname === "/");
+  const atHomepage =
+    pathIsHomepage || (!isSSR && window.location.pathname === "/");
 
   return (
     <div className="header">
@@ -21,12 +22,12 @@ const Header = ({ path }: IHeaderProps) => {
         />
       </Link>
       <Link href={atHomepage ? `/upload` : `/`} prefetch>
-        <div style={{ width: "50px", height: "50px" }}>
+        <div>
           {atHomepage ? (
             <SvgIcon clickable={true} icon="add" />
           ) : (
-              <SvgIcon clickable={true} icon="clear" />
-            )}
+            <SvgIcon clickable={true} icon="clear" />
+          )}
         </div>
       </Link>
 
@@ -37,12 +38,13 @@ const Header = ({ path }: IHeaderProps) => {
           justify-content: space-between;
           align-items: center;
           width: 90vw;
+          height: 5.5vh;
           margin-bottom: 1vh;
           margin-top: 1vh;
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
 export default Header;

@@ -1,11 +1,11 @@
-import { unprotect } from "mobx-state-tree"
-import { observer } from "mobx-react"
-import MetaMask from "./components/MetaMask"
+import { unprotect } from "mobx-state-tree";
+import { observer } from "mobx-react";
+import MetaMask from "./components/MetaMask";
 import TextInput from "./components/TextInput";
 import SelectInput from "./components/SelectInput";
 import Button from "./components/Button";
-import HomeModel from "./models/Home"
-import enigmaStore from "./stores/enigma"
+import HomeModel from "./models/Home";
+import enigmaStore from "./stores/enigma";
 
 const homeStore = HomeModel.create();
 unprotect(homeStore);
@@ -22,6 +22,19 @@ const Home = observer(() => (
         <a href="https://enigma.co/">Enigma Protocol</a>
       </p> */}
       </div>
+      <Button
+        onClick={homeStore.getNames}
+        disabled={!enigmaStore.isInstalled}
+        loading={homeStore.getNamesTx.status === "PENDING"}
+        undertext={
+          homeStore.getNamesTx.status === "FAILURE"
+            ? "Something went bad, please retry"
+            : ""
+        }
+        style={{ width: "10vw", marginTop: "2vh" }}
+      >
+        Fetch Tasks
+      </Button>
       <SelectInput
         label="Select Task"
         options={{
@@ -29,34 +42,31 @@ const Home = observer(() => (
           values: homeStore.names
         }}
         selected={homeStore.selected}
-        onSelect={e => homeStore.selected = e.target.value}
+        onSelect={e => (homeStore.selected = e.target.value)}
       />
-      <Button
-        onClick={homeStore.getNames}
-        disabled={!enigmaStore.isInstalled}
-        loading={homeStore.getNamesTx.status === "PENDING"}
-        undertext={homeStore.getNamesTx.status === "FAILURE" ? "Something went bad, please retry" : ""}
-      >
-        fetch tasks
-      </Button>
+
       <TextInput
         label="Hourly Rate"
         type="number"
         value={homeStore.hourlyRate}
-        onChange={e => homeStore.hourlyRate = e.target.value}
+        onChange={e => (homeStore.hourlyRate = e.target.value)}
       />
       <TextInput
         label="Total Hours"
         type="number"
         value={homeStore.totalHours}
-        onChange={e => homeStore.totalHours = e.target.value}
+        onChange={e => (homeStore.totalHours = e.target.value)}
       />
     </div>
     <Button
       disabled={!homeStore.canCalcPercentile || !enigmaStore.isInstalled}
       onClick={homeStore.calcPercentile}
       loading={homeStore.calcPercentileTx.status === "PENDING"}
-      undertext={homeStore.calcPercentileTx.status === "FAILURE" ? "Something went bad, please retry" : ""}
+      undertext={
+        homeStore.calcPercentileTx.status === "FAILURE"
+          ? "Something went bad, please retry"
+          : ""
+      }
     >
       GO
     </Button>
@@ -95,6 +105,6 @@ const Home = observer(() => (
       }
     `}</style>
   </div>
-))
+));
 
 export default Home;
