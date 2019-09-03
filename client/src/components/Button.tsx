@@ -1,19 +1,36 @@
 import { CSSProperties } from "react";
+import Loading from "./Loading";
 
 interface IButtonProps {
   children?: any;
   onClick?: () => any;
   disabled?: boolean;
   style?: CSSProperties;
+  loading?: boolean;
+  undertext?: any;
 }
 
-const Button = ({ children, onClick, disabled, style }: IButtonProps) => (
-  <>
-    <button onClick={onClick} style={style} disabled={disabled}>
-      {children}
-    </button>
+const Button = ({
+  children,
+  onClick,
+  disabled,
+  style,
+  loading = false,
+  undertext
+}: IButtonProps) => (
+    <>
+      <button onClick={onClick} style={style} disabled={disabled}>
+        {loading ? (
+          <div className="loading">
+            <Loading />
+          </div>
+        ) : (
+            <div style={{ fontSize: "calc(12px + 0.4vw)" }}>{children}</div>
+          )}
+      </button>
+      {undertext ? <div className="undertext">{undertext}</div> : null}
 
-    <style jsx>{`
+      <style jsx>{`
       button {
         background: ${!disabled ? "#e72a9b" : "#634e5a"};
         font-size: 2vh;
@@ -28,7 +45,7 @@ const Button = ({ children, onClick, disabled, style }: IButtonProps) => (
         cursor: pointer;
       }
     `}</style>
-  </>
-);
+    </>
+  );
 
 export default Button;

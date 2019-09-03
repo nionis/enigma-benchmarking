@@ -21,15 +21,15 @@ const check = async (): Promise<Web3> => {
 }
 
 const getWeb3 = () => {
-  return new Promise<Web3 | undefined>(resolve => {
+  return new Promise<Web3 | undefined>((resolve, reject) => {
     // If document has loaded already, try to get Web3 immediately.
     if (document.readyState === "complete") {
-      return check().then(resolve);
+      return check().then(resolve).catch(reject);
     }
 
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener(`load`, () => {
-      check().then(resolve);
+      check().then(resolve).catch(reject);
     });
   });
 };

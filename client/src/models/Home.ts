@@ -32,12 +32,18 @@ const Model = types.model("Home", {
   }))
   .actions(self => ({
     getNames: flow(function* () {
-      const result = yield self.getNamesTx.run(enigmaStore.getEnigma(), {
-        fn: "get_datasets_info()",
-        args: "",
-        userAddr: web3Store.account,
-        contractAddr: enigmaStore.enigmaContractAddress
-      })
+      let result;
+
+      try {
+        result = yield self.getNamesTx.run(enigmaStore.getEnigma(), {
+          fn: "get_datasets_info()",
+          args: "",
+          userAddr: web3Store.account,
+          contractAddr: enigmaStore.enigmaContractAddress
+        })
+      } catch (err) {
+        return;
+      }
 
       const { ids, names } = getDatasetsInfo(result.decryptedOutput);
 
@@ -52,16 +58,22 @@ const Model = types.model("Home", {
     calcPercentile: flow(function* () {
       const { selected, totalHours, hourlyRate } = self;
 
-      const result = yield self.calcPercentileTx.run(enigmaStore.getEnigma(), {
-        fn: "calc_percentile(uint256, uint256, uint256)",
-        args: [
-          [selected, "uint256"],
-          [totalHours, "uint256"],
-          [hourlyRate, "uint256"]
-        ],
-        userAddr: web3Store.account,
-        contractAddr: enigmaStore.enigmaContractAddress
-      })
+      let result;
+
+      try {
+        result = yield self.calcPercentileTx.run(enigmaStore.getEnigma(), {
+          fn: "calc_percentile(uint256, uint256, uint256)",
+          args: [
+            [selected, "uint256"],
+            [totalHours, "uint256"],
+            [hourlyRate, "uint256"]
+          ],
+          userAddr: web3Store.account,
+          contractAddr: enigmaStore.enigmaContractAddress
+        })
+      } catch (err) {
+        return;
+      }
 
       const percentile = rawUint256ToStr(result.decryptedOutput);
 

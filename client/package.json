@@ -13,6 +13,7 @@
   "dependencies": {
     "@material-ui/core": "^4.3.1",
     "@material-ui/icons": "^4.2.1",
+    "@next/bundle-analyzer": "^9.0.5",
     "@types/react-dropzone": "^5.1.0",
     "@types/web3": "^1.0.19",
     "csvtojson-converter": "^2.0.4",

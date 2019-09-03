@@ -12,6 +12,9 @@ const SelectInput = ({ label, options, selected, onSelect }: ISelectInputProps) 
   <div className="textInput">
     <div className="label">{label}</div>
     <select className="select" name="options" value={selected} onChange={onSelect}>
+      {options.ids.length === 0 ? (
+        <option value="" disabled selected={!selected}>Please fetch tasks</option>
+      ) : null}
       {options.ids.map((id, index) => (
         <option className="option" value={id} key={id}>
           {options.values[index]}

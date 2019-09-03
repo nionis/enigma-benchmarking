@@ -98,17 +98,21 @@ const Model = types.model("Upload", {
           rates: [],
         })
 
-      yield self.transaction.run(enigmaStore.getEnigma(), {
-        fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
-        args: [
-          [Web3.utils.stringToHex(self.name), "bytes32"],
-          [ids, "uint256[]"],
-          [total_hours, "uint256[]"],
-          [rates, "uint256[]"]
-        ],
-        userAddr: web3Store.account,
-        contractAddr: enigmaStore.enigmaContractAddress
-      })
+      try {
+        yield self.transaction.run(enigmaStore.getEnigma(), {
+          fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+          args: [
+            [Web3.utils.stringToHex(self.name), "bytes32"],
+            [ids, "uint256[]"],
+            [total_hours, "uint256[]"],
+            [rates, "uint256[]"]
+          ],
+          userAddr: web3Store.account,
+          contractAddr: enigmaStore.enigmaContractAddress
+        })
+      } catch (err) {
+        return;
+      }
     })
   }))
 

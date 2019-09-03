@@ -5,6 +5,7 @@ import { isSSR } from "../../utils";
 
 const Model = types
   .model("Web3", {
+    isDenied: types.maybeNull(types.boolean),
     isInstalled: types.maybeNull(types.boolean),
     account: types.maybeNull(types.string),
     networkId: types.maybeNull(types.number)
@@ -57,10 +58,20 @@ const Model = types
       if (isSSR) {
         return;
       }
+      if (self.isDenied) {
+        return;
+      }
 
       // not found, check window
       if (!self._getWeb3()) {
-        self.setWeb3(yield getWeb3());
+        const _web3 = yield getWeb3().catch(console.error)
+
+        if (_web3) {
+          self.setWeb3(_web3);
+          self.isDenied = false;
+        } else {
+          self.isDenied = true;
+        }
       }
 
       const web3 = self._getWeb3();

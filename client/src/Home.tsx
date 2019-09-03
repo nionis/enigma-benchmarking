@@ -1,15 +1,19 @@
 import { unprotect } from "mobx-state-tree"
 import { observer } from "mobx-react"
+import MetaMask from "./components/MetaMask"
 import TextInput from "./components/TextInput";
 import SelectInput from "./components/SelectInput";
 import Button from "./components/Button";
 import HomeModel from "./models/Home"
+import enigmaStore from "./stores/enigma"
 
 const homeStore = HomeModel.create();
 unprotect(homeStore);
 
 const Home = observer(() => (
   <div className="container">
+    <MetaMask />
+
     <div className="body">
       <div className="title">
         Submit Your Quote
@@ -25,12 +29,16 @@ const Home = observer(() => (
           values: homeStore.names
         }}
         selected={homeStore.selected}
-        onSelect={e => {
-          console.log(e.target.value)
-          homeStore.selected = e.target.value
-        }}
+        onSelect={e => homeStore.selected = e.target.value}
       />
-      <Button onClick={homeStore.getNames}>fetch</Button>
+      <Button
+        onClick={homeStore.getNames}
+        disabled={!enigmaStore.isInstalled}
+        loading={homeStore.getNamesTx.status === "PENDING"}
+        undertext={homeStore.getNamesTx.status === "FAILURE" ? "Something went bad, please retry" : ""}
+      >
+        fetch tasks
+      </Button>
       <TextInput
         label="Hourly Rate"
         type="number"
@@ -44,7 +52,14 @@ const Home = observer(() => (
         onChange={e => homeStore.totalHours = e.target.value}
       />
     </div>
-    <Button disabled={!homeStore.canCalcPercentile} onClick={homeStore.calcPercentile}>GO</Button>
+    <Button
+      disabled={!homeStore.canCalcPercentile || !enigmaStore.isInstalled}
+      onClick={homeStore.calcPercentile}
+      loading={homeStore.calcPercentileTx.status === "PENDING"}
+      undertext={homeStore.calcPercentileTx.status === "FAILURE" ? "Something went bad, please retry" : ""}
+    >
+      GO
+    </Button>
 
     <style jsx>{`
       .body {

@@ -63,7 +63,7 @@ const Upload = observer(() => (
             target="_blank"
           >
             <img
-              src="/static/images/spreadsheet.jpg"
+              src="/static/images/spreadsheet.png"
               alt="spreadsheet"
               style={{
                 borderRadius: "10px",
@@ -76,7 +76,14 @@ const Upload = observer(() => (
         </div>
       </div>
     </div>
-    <Button onClick={uploadStore.upload} disabled={!uploadStore.canUpload}>GO</Button>
+    <Button
+      onClick={uploadStore.upload}
+      disabled={!uploadStore.canUpload}
+      loading={uploadStore.transaction.status === "PENDING"}
+      undertext={uploadStore.transaction.status === "FAILURE" ? "Something went bad, please retry" : ""}
+    >
+      GO
+    </Button>
 
     <style jsx>{`
       .exampleText {
