@@ -1,7 +1,7 @@
 /*
   # Storage
-  We do not store all date on a single HashMap, instead we store every DataSet seperately.
-  This is so we can safe gas cost, and avoid unnecessary serializations / deserializations.
+  We do not store all state on a single HashMap, instead we store every DataSet seperately.
+  This is so we can save gas costs, and avoid unnecessary serializations / deserializations.
 */
 #![no_std]
 #![allow(unused_attributes)]
@@ -17,7 +17,7 @@ use eng_wasm_derive::pub_interface;
 use serde::{Deserialize, Serialize};
 
 static DATASETS_LENGTH: &str = "DATASETS_LENGTH";
-static DATASET: &str = "DATASET_";
+static DATASET: &str = "DATASET_"; // dynamically generated afterwards "DATASET_<ID>"
 
 #[derive(Serialize, Deserialize)]
 pub struct DataPoint {
@@ -37,6 +37,7 @@ type DataSetsInfo = (Vec<U256>, Vec<H256>);
 
 pub struct Contract;
 
+// returns a DataSet state key, ex: "DATASET_1"
 fn create_dataset_key(id: U256) -> String {
   let mut key = String::from(DATASET);
   key.push_str(&id.to_string());
@@ -98,10 +99,10 @@ impl ContractInterface for Contract {
     let id = datasets_length.checked_add(U256::from(1)).unwrap();
     let key = &create_dataset_key(id);
 
-    // datapoint length must be below 100
-    assert!(ids.len() <= 100);
+    // datasets length must be below 1000
+    assert!(ids.len() <= 1000);
 
-    // datapoint arguments must be equal
+    // datasets arguments must be equal
     assert!(ids.len() == total_hours.len() && ids.len() == rates.len());
 
     let mut datapoints: Vec<DataPoint> = Vec::new();

@@ -23,7 +23,7 @@ function sleep(ms) {
 
 let enigma = null;
 
-const compute = async ({ fn, args, userAddr, contractAddr }) => {
+const compute = async ({ fn, args, userAddr, contractAddr, expectFail }) => {
   let task = await new Promise((resolve, reject) => {
     enigma.computeTask(fn, args, 10000000, utils.toGrains(1), userAddr, contractAddr)
       .on(eeConstants.SEND_TASK_INPUT_RESULT, (result) => resolve(result))
@@ -32,9 +32,12 @@ const compute = async ({ fn, args, userAddr, contractAddr }) => {
 
   while (task.ethStatus !== 2) {
     if (task.ethStatus === 3) {
+      if (expectFail) return true;
+
       throw Error("task failed");
     } else if (task.ethStatus === 4) {
-      console.log(task);
+      if (expectFail) return true;
+
       throw Error("transaction reverted");
     }
 
@@ -99,6 +102,60 @@ contract("benchmarking", accounts => {
   });
 
   it('get length of datasets', async () => {
+    const result = await compute({
+      fn: "get_datasets_length()",
+      args: "",
+      userAddr: owner,
+      contractAddr: secretContractAddr
+    })
+
+    expect(rawUint256ToStr(result.decryptedOutput)).to.equal("0");
+  });
+
+  it('add large dataset', async () => {
+    const args = Array.from(Array(1001)).map(v => 1);
+
+    const failed = await compute({
+      fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+      args: [
+        [web3.utils.stringToHex("server costs"), "bytes32"],
+        [args, "uint256[]"],
+        [args, "uint256[]"],
+        [args, "uint256[]"]
+      ],
+      userAddr: owner,
+      contractAddr: secretContractAddr,
+      expectFail: true
+    });
+
+    expect(failed).to.equal(true);
+
+    const result = await compute({
+      fn: "get_datasets_length()",
+      args: "",
+      userAddr: owner,
+      contractAddr: secretContractAddr
+    })
+
+    expect(rawUint256ToStr(result.decryptedOutput)).to.equal("0");
+  });
+
+  it('add invalid dataset', async () => {
+    const failed = await compute({
+      fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+      args: [
+        [web3.utils.stringToHex("server costs"), "bytes32"],
+        [[1, 2, 3], "uint256[]"],
+        [[1, 2, 3], "uint256[]"],
+        [[1, 2], "uint256[]"]
+      ],
+      userAddr: owner,
+      contractAddr: secretContractAddr,
+      expectFail: true
+    });
+
+    expect(failed).to.equal(true);
+
     const result = await compute({
       fn: "get_datasets_length()",
       args: "",
