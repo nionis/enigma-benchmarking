@@ -1,4 +1,4 @@
-# Enigma - Secret Benchmarking
+# Enigma - Secret Benchmarking _WIP_
 
 ## Implementation Details
 
@@ -23,11 +23,6 @@
 - [x] Integration tests
 
 - [x] Readme
-
-## Issues
-- `secret_contracts/src/lib.rs` -> `fn calc_percentile`, check if it is done correctly
-- Enigma MST Model: `client/src/models/Enigma.ts`, dynamically retrieve contract data
-- bundle size (Enigma.js & Web3 take alot of space)
 
 ## Pitfalls
 - After doing `discovery start` make sure you reset [metamask](https://ethereum.stackexchange.com/questions/44311/reset-metamask-nonce)
