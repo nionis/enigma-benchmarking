@@ -24,16 +24,18 @@ class MyApp extends App {
     return (
       <Container>
         <Head>
+          <title>
+            Private Benchmarks
+          </title>
+          <meta name="Description" content="Compare your data with others privately and secure." />
           <link
             href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
             rel="stylesheet"
             key="google-font-cabin"
           />
         </Head>
-
         <Header path={pageProps.path} />
         <Component {...pageProps} />
-
         <style jsx global>{`
           body {
             background-color: #001c3d;
