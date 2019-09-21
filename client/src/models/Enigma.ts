@@ -29,7 +29,7 @@ const Model = types
     };
   })
   .actions(self => ({
-    init: flow(function*() {
+    init: flow(function* () {
       if (isSSR) return;
       if (!web3Store.isLoggedIn) return;
 
@@ -48,14 +48,14 @@ const Model = types
         EnigmaTokenContract.networks[web3Store.networkId].address;
       // FIXME: where can I get this from other than text/benchmarking.txt
       self.enigmaContractAddress =
-        "0x3f130d8f687e147e47d26cb0aee43528511ede5d923da8bf0daedd72586f6540";
+        "0x89eb7b72177e6eccfd96d8a4c0c1f314df928fb509d0d2b9c417fbb9b451a8bb";
 
       const enigma = new Enigma(
         web3Store.getWeb3(),
         EnigmaContract.networks[web3Store.networkId].address,
         EnigmaTokenContract.networks[web3Store.networkId].address,
         // FIXME: dynamic url
-        "http://192.168.184.210:3346",
+        "http://172.17.186.37:3346",
         {
           gas: 4712388,
           gasPrice: 100000000000,

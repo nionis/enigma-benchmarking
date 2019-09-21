@@ -4,12 +4,11 @@ import { getNumberWithOrdinal } from "./utils";
 
 interface IResultProps {
   name?: string;
-  totalHours?: string;
-  hourlyRate?: string;
+  rate?: string;
   percentile?: string;
 }
 
-const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
+const Result = ({ name, rate, percentile }: IResultProps) => (
   <div className="container">
     <div className="body">
       <div className="title">Results</div>
@@ -24,8 +23,7 @@ const Result = ({ name, totalHours, hourlyRate, percentile }: IResultProps) => (
       <div className="quoteInfo">
         {" "}
         <div className="text">{name}</div>
-        <div className="text">{hourlyRate}/hour</div>
-        <div className="text">{totalHours} hours total</div>
+        <div className="text">input: {rate}</div>
       </div>
     </div>
     <Link href={`/`} prefetch>

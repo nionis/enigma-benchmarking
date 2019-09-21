@@ -116,10 +116,9 @@ contract("benchmarking", accounts => {
     const args = Array.from(Array(1001)).map(v => 1);
 
     const failed = await compute({
-      fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+      fn: "add_dataset(bytes32, uint256[], uint256[])",
       args: [
         [web3.utils.stringToHex("server costs"), "bytes32"],
-        [args, "uint256[]"],
         [args, "uint256[]"],
         [args, "uint256[]"]
       ],
@@ -142,10 +141,9 @@ contract("benchmarking", accounts => {
 
   it('add invalid dataset', async () => {
     const failed = await compute({
-      fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+      fn: "add_dataset(bytes32, uint256[], uint256[])",
       args: [
         [web3.utils.stringToHex("server costs"), "bytes32"],
-        [[1, 2, 3], "uint256[]"],
         [[1, 2, 3], "uint256[]"],
         [[1, 2], "uint256[]"]
       ],
@@ -168,11 +166,10 @@ contract("benchmarking", accounts => {
 
   it('add dataset', async () => {
     await compute({
-      fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+      fn: "add_dataset(bytes32, uint256[], uint256[])",
       args: [
         [web3.utils.stringToHex("server costs"), "bytes32"],
         [[1, 2, 3, 4, 5], "uint256[]"],
-        [[10, 20, 30, 40, 50], "uint256[]"],
         [[5, 5, 10, 10, 20], "uint256[]"]
       ],
       userAddr: owner,
@@ -203,18 +200,45 @@ contract("benchmarking", accounts => {
     expect(names[0]).to.equal("server costs");
   });
 
+  it('get percentile of rate 10', async () => {
+    const result = await compute({
+      fn: "calc_percentile(uint256, uint256, uint256)",
+      args: [
+        [1, "uint256"],
+        [10, "uint256"]
+      ],
+      userAddr: owner,
+      contractAddr: secretContractAddr
+    });
+
+    expect(rawUint256ToStr(result.decryptedOutput)).to.equal("80");
+  });
+
   it('get percentile of rate 20', async () => {
     const result = await compute({
       fn: "calc_percentile(uint256, uint256, uint256)",
       args: [
         [1, "uint256"],
-        [50, "uint256"],
         [20, "uint256"]
       ],
       userAddr: owner,
       contractAddr: secretContractAddr
     });
 
-    expect(rawUint256ToStr(result.decryptedOutput)).to.equal("20");
+    expect(rawUint256ToStr(result.decryptedOutput)).to.equal("99");
+  });
+
+  it('get percentile of rate 4', async () => {
+    const result = await compute({
+      fn: "calc_percentile(uint256, uint256, uint256)",
+      args: [
+        [1, "uint256"],
+        [4, "uint256"]
+      ],
+      userAddr: owner,
+      contractAddr: secretContractAddr
+    });
+
+    expect(rawUint256ToStr(result.decryptedOutput)).to.equal("1");
   });
 });

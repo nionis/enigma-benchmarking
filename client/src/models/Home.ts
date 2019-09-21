@@ -8,8 +8,7 @@ import { getDatasetsInfo, rawUint256ToStr } from "../utils"
 const Model = types.model("Home", {
   datasets: types.map(types.string),
   selected: types.maybeNull(types.string),
-  hourlyRate: types.maybeNull(types.string),
-  totalHours: types.maybeNull(types.string),
+  rate: types.maybeNull(types.string),
   getNamesTx: types.optional(EnigmaTransaction, {}),
   calcPercentileTx: types.optional(EnigmaTransaction, {}),
 })
@@ -23,10 +22,8 @@ const Model = types.model("Home", {
     get canCalcPercentile() {
       return (
         self.selected &&
-        self.totalHours &&
-        self.totalHours.length > 0 &&
-        self.hourlyRate &&
-        self.hourlyRate.length > 0
+        self.rate &&
+        self.rate.length > 0
       );
     }
   }))
@@ -56,7 +53,7 @@ const Model = types.model("Home", {
       self.selected = ids[0];
     }),
     calcPercentile: flow(function* () {
-      const { selected, totalHours, hourlyRate } = self;
+      const { selected, rate } = self;
 
       let result;
 
@@ -65,8 +62,7 @@ const Model = types.model("Home", {
           fn: "calc_percentile(uint256, uint256, uint256)",
           args: [
             [selected, "uint256"],
-            [totalHours, "uint256"],
-            [hourlyRate, "uint256"]
+            [rate, "uint256"]
           ],
           userAddr: web3Store.account,
           contractAddr: enigmaStore.enigmaContractAddress
@@ -80,8 +76,7 @@ const Model = types.model("Home", {
       yield Router.push({
         pathname: '/result', query: {
           name: self.datasets.get(selected),
-          totalHours,
-          hourlyRate,
+          rate,
           percentile
         }
       })

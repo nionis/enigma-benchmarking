@@ -5,13 +5,12 @@ import Header from "../src/components/Header";
 
 class MyApp extends App {
   static async getInitialProps({ ctx }) {
-    const { name, totalHours, hourlyRate, percentile } = ctx.query;
+    const { name, rate, percentile } = ctx.query;
 
     const pageProps = {
       path: ctx.asPath,
       name,
-      totalHours,
-      hourlyRate,
+      rate,
       percentile
     };
 

@@ -15,7 +15,6 @@ const AcceptedFormatsList = Object.keys(AcceptedFormatsEnum) as (keyof typeof Ac
 
 let fileContents: {
   ids: number,
-  total_hours: number,
   rates: number,
 }[] | null = null;
 
@@ -85,8 +84,6 @@ const Model = types.model("Upload", {
       const okValues = fileContents.every(o => (
         o.ids &&
         !isNaN(Number(o.ids)) &&
-        o.total_hours &&
-        !isNaN(Number(o.total_hours)) &&
         o.rates &&
         !isNaN(Number(o.rates))
       ));
@@ -106,27 +103,23 @@ const Model = types.model("Upload", {
 
       const {
         ids,
-        total_hours,
         rates
       } = fileContents.reduce((result, item) => {
         result.ids.push(item.ids)
-        result.total_hours.push(item.total_hours)
         result.rates.push(item.rates)
 
         return result;
       }, {
-          ids: [],
-          total_hours: [],
-          rates: [],
-        })
+        ids: [],
+        rates: [],
+      })
 
       try {
         yield self.transaction.run(enigmaStore.getEnigma(), {
-          fn: "add_dataset(bytes32, uint256[], uint256[], uint256[])",
+          fn: "add_dataset(bytes32, uint256[], uint256[])",
           args: [
             [Web3.utils.stringToHex(self.name), "bytes32"],
             [ids, "uint256[]"],
-            [total_hours, "uint256[]"],
             [rates, "uint256[]"]
           ],
           userAddr: web3Store.account,

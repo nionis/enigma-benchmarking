@@ -22,7 +22,6 @@ static DATASET: &str = "DATASET_"; // dynamically generated afterwards "DATASET_
 #[derive(Serialize, Deserialize)]
 pub struct DataPoint {
   id: U256,
-  total_hours: U256,
   rate: U256,
 }
 
@@ -61,8 +60,8 @@ impl Contract {
 pub trait ContractInterface {
   fn get_datasets_length() -> U256;
   fn get_datasets_info() -> DataSetsInfo;
-  fn add_dataset(name: H256, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> ();
-  fn calc_percentile(id: U256, _total_hours: U256, rate: U256) -> U256;
+  fn add_dataset(name: H256, ids: Vec<U256>, rates: Vec<U256>) -> ();
+  fn calc_percentile(id: U256, rate: U256) -> U256;
 }
 
 impl ContractInterface for Contract {
@@ -94,7 +93,7 @@ impl ContractInterface for Contract {
   }
 
   #[no_mangle]
-  fn add_dataset(name: H256, ids: Vec<U256>, total_hours: Vec<U256>, rates: Vec<U256>) -> () {
+  fn add_dataset(name: H256, ids: Vec<U256>, rates: Vec<U256>) -> () {
     let datasets_length = Self::get_datasets_length();
     let id = datasets_length.checked_add(U256::from(1)).unwrap();
     let key = &create_dataset_key(id);
@@ -103,14 +102,13 @@ impl ContractInterface for Contract {
     assert!(ids.len() <= 1000);
 
     // datasets arguments must be equal
-    assert!(ids.len() == total_hours.len() && ids.len() == rates.len());
+    assert!(ids.len() == rates.len());
 
     let mut datapoints: Vec<DataPoint> = Vec::new();
 
     for (i, datapoint_id) in ids.iter().enumerate() {
       datapoints.push(DataPoint {
         id: *datapoint_id,
-        total_hours: total_hours[i],
         rate: rates[i],
       })
     }
@@ -125,22 +123,27 @@ impl ContractInterface for Contract {
     );
   }
 
-  // TODO: check if this is correctly done
   #[no_mangle]
-  fn calc_percentile(id: U256, _total_hours: U256, rate: U256) -> U256 {
+  fn calc_percentile(id: U256, rate: U256) -> U256 {
     let dataset = Self::get_dataset(id);
     let total_datapoints = dataset.datapoints.len();
-    let mut with_same_rate = 0;
+    let mut below_or_equal = 0;
 
     for datapoint in dataset.datapoints.iter() {
-      if datapoint.rate != rate {
+      if datapoint.rate > rate {
         continue;
       }
 
-      with_same_rate = with_same_rate + 1;
+      below_or_equal = below_or_equal + 1;
     }
 
-    let percentile = (with_same_rate * 100) / total_datapoints;
+    let mut percentile = (below_or_equal * 100) / total_datapoints;
+
+    if percentile == 0 {
+      percentile = 1;
+    } else if percentile == 100 {
+      percentile = 99;
+    }
 
     return U256::from(percentile);
   }

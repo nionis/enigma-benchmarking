@@ -43,16 +43,10 @@ const Home = observer(() => (
       />
 
       <TextInput
-        label="Hourly Rate"
+        label="Rate"
         type="number"
-        value={homeStore.hourlyRate || ""}
-        onChange={e => (homeStore.hourlyRate = e.target.value)}
-      />
-      <TextInput
-        label="Total Hours"
-        type="number"
-        value={homeStore.totalHours || ""}
-        onChange={e => (homeStore.totalHours = e.target.value)}
+        value={homeStore.rate || ""}
+        onChange={e => (homeStore.rate = e.target.value)}
       />
     </div>
     <Button
