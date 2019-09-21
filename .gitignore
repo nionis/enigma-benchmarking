@@ -3,3 +3,4 @@ build/
 target/
 .next/
 .env
+notes.txt
