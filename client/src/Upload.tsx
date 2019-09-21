@@ -22,11 +22,23 @@ const MyDropzone = observer(() => {
     accept: "application/json, .csv"
   });
 
+  const fileSuccess = (
+    uploadStore.input_status === "ACCEPTED" ||
+    uploadStore.reader_status === "ACCEPTED"
+  );
+
   const failure = (
     uploadStore.input_status === "REJECTED" ||
     uploadStore.reader_status === "REJECTED" ||
     uploadStore.transaction.status === "FAILURE"
   );
+
+  const borderColor = (() => {
+    if (fileSuccess) return "green";
+    if (failure) return "red";
+
+    return "rgba(255, 255, 255, 0.51)"
+  })()
 
   return (
     <div className="fileUpload" {...getRootProps()}>
@@ -82,7 +94,7 @@ const MyDropzone = observer(() => {
           cursor: pointer;
         }
         .border {
-          border: 1px dashed ${failure ? "red" : "rgba(255, 255, 255, 0.51)"};
+          border: 1px dashed ${borderColor};
           height: 23vh;
           width: 63vh;
           border-radius: 15px;

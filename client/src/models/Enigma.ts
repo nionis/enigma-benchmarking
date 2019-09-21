@@ -48,7 +48,7 @@ const Model = types
         EnigmaTokenContract.networks[web3Store.networkId].address;
       // FIXME: where can I get this from other than text/benchmarking.txt
       self.enigmaContractAddress =
-        "0x89eb7b72177e6eccfd96d8a4c0c1f314df928fb509d0d2b9c417fbb9b451a8bb";
+        "0x88987af7d35eabcad95915b93bfd3d2bc3308f06b7197478b0dfca268f0497dc";
 
       const enigma = new Enigma(
         web3Store.getWeb3(),
