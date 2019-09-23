@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic"
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import SvgIcon from "./SvgIcon";
 const MetaMask = dynamic(() => import("./MetaMask"));
@@ -21,9 +21,7 @@ const Header = ({ path }: IHeaderProps) => {
           style={{ cursor: "pointer" }}
         />
       </Link>
-      {
-        !isResult ? <MetaMask /> : null
-      }
+      {!isResult ? <MetaMask /> : null}
       <Link href={isHomepage ? `/upload` : `/`} prefetch>
         <div className="svgIconContainer">
           <SvgIcon clickable={true} icon={isHomepage ? "add" : "clear"} />
@@ -40,6 +38,8 @@ const Header = ({ path }: IHeaderProps) => {
           height: 5.5vh;
           margin-bottom: 1vh;
           margin-top: 1vh;
+          margin-left: 5vw;
+          margin-right: 5vw;
         }
 
         .svgIconContainer {

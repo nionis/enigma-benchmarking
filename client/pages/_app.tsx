@@ -23,10 +23,11 @@ class MyApp extends App {
     return (
       <Container>
         <Head>
-          <title>
-            Private Benchmarks
-          </title>
-          <meta name="Description" content="Compare your data with others privately and secure." />
+          <title>Private Benchmarks</title>
+          <meta
+            name="Description"
+            content="Compare your data with others privately and secure."
+          />
           <link
             href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
             rel="stylesheet"
@@ -44,6 +45,9 @@ class MyApp extends App {
             margin: none;
             padding: none;
             font-family: "Roboto", sans-serif;
+          }
+          #__next {
+            width: 100vw;
           }
         `}</style>
       </Container>

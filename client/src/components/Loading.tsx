@@ -5,8 +5,8 @@ const Loading = () => {
     <CircularProgress
       style={{
         color: "white",
-        width: "3vh",
-        height: "3vh",
+        width: "2vh",
+        height: "2vh",
         margin: "1vh"
       }}
     />
