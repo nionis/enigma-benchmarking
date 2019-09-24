@@ -23,7 +23,7 @@ class MyApp extends App {
     return (
       <Container>
         <Head>
-          <title>Private Benchmarks</title>
+          <title>Private & Secure Benchmarks</title>
           <meta
             name="Description"
             content="Compare your data with others privately and secure."
