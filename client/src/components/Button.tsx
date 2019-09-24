@@ -18,19 +18,19 @@ const Button = ({
   loading = false,
   undertext
 }: IButtonProps) => (
-    <>
-      <button onClick={onClick} style={style} disabled={disabled}>
-        {loading ? (
-          <div className="loading">
-            <Loading />
-          </div>
-        ) : (
-            <div style={{ fontSize: "calc(12px + 0.4vw)" }}>{children}</div>
-          )}
-      </button>
-      {undertext ? <div className="undertext">{undertext}</div> : null}
+  <>
+    <button onClick={onClick} style={style} disabled={disabled}>
+      {loading ? (
+        <div className="loading">
+          <Loading />
+        </div>
+      ) : (
+        <div style={{ fontSize: "calc(12px + 0.4vw)" }}>{children}</div>
+      )}
+    </button>
+    {undertext ? <div className="undertext">{undertext}</div> : null}
 
-      <style jsx>{`
+    <style jsx>{`
       button {
         background: ${!disabled ? "#e72a9b" : "#634e5a"};
         font-size: 2vh;
@@ -45,7 +45,7 @@ const Button = ({
         cursor: pointer;
       }
     `}</style>
-    </>
-  );
+  </>
+);
 
 export default Button;

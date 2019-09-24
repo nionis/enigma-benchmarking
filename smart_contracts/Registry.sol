@@ -1,3 +1,7 @@
+/*
+  Keep track of datasets so they can be fetched
+  without calling secret contract.
+*/
 pragma solidity ^0.5.0;
 
 contract Registry {

@@ -57,7 +57,7 @@ const Model = types
     };
   })
   .actions(self => ({
-    sync: flow(function* () {
+    sync: flow(function*() {
       if (isSSR) {
         return;
       }
@@ -67,7 +67,7 @@ const Model = types
 
       // not found, check window
       if (!self._getWeb3()) {
-        const _web3 = yield getWeb3().catch(console.error)
+        const _web3 = yield getWeb3().catch(console.error);
 
         if (_web3) {
           self.setWeb3(_web3);
@@ -85,16 +85,16 @@ const Model = types
         return;
       }
       if (!self.isInstalled) {
-        console.log("Web3 Initialized")
+        console.log("Web3 Initialized");
       }
 
       self.isInstalled = true;
       self.setWeb3(web3);
 
       const accounts = (yield web3.eth.getAccounts()) || [];
-      self.account = accounts[0] || null;
-
       const networkId = yield web3.eth.net.getId();
+
+      self.account = accounts[0] || null;
       self.networkId = networkId;
     })
   }));

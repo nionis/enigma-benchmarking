@@ -12,13 +12,7 @@ unprotect(homeStore);
 const Home = observer(() => (
   <div className="container">
     <div className="body">
-      <div className="title">
-        Submit Your Quote
-        {/* <p>
-        Encrypted Secret Benchmarking using the{" "}
-        <a href="https://enigma.co/">Enigma Protocol</a>
-      </p> */}
-      </div>
+      <div className="title">Submit Your Quote</div>
       <Button
         onClick={homeStore.getNames}
         disabled={!enigmaStore.isInstalled}

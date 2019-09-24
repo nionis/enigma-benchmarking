@@ -34,8 +34,11 @@ class MyApp extends App {
             key="google-font-cabin"
           />
         </Head>
+
         <Header path={pageProps.path} />
+
         <Component {...pageProps} />
+
         <style jsx global>{`
           body {
             background-color: #001c3d;

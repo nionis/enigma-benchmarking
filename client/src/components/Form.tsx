@@ -8,7 +8,7 @@ interface IFormProps {
 const Form = ({ children, labels }: IFormProps) => (
   <div className="form">
     <div className="inputs">
-      {labels.map((label) => {
+      {labels.map(label => {
         return <TextInput label={label} key={label} />;
       })}
     </div>

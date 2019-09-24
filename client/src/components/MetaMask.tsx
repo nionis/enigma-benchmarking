@@ -22,7 +22,12 @@ const GetText = ({
     return <div>UNLOCK METAMASK</div>;
   }
 
-  const accountSmall = `${account.substr(0, 3)}...${account.substr(account.length - 3, account.length)}`
+  const accountSmall = (() => {
+    const start = account.substr(0, 3);
+    const end = account.substr(account.length - 3, account.length);
+
+    return `${start}...${end}`;
+  })();
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
@@ -50,6 +55,7 @@ const Metamask = observer(() => {
           height: 4vh;
           padding-right: 1vh;
         }
+
         .metamaskStatus {
           background-color: #fafafa;
           border: 1px solid ${isLoggedIn ? "#56A2BA" : "#FF6A29"};

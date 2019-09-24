@@ -1,10 +1,7 @@
 {
-  "name": "myproject",
+  "name": "enigma-benchmarking",
   "version": "1.0.0",
-  "description": "",
-  "directories": {
-    "test": "test"
-  },
+  "description": "Compare your data with others privately and secure.",
   "dependencies": {
     "@openzeppelin/contracts": "^2.3.0",
     "dotenv": "^8.0.0",
@@ -12,9 +9,6 @@
     "web3": "^1.2.1"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC"
 }

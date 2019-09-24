@@ -1,4 +1,4 @@
-import { Add, Clear, Done } from "@material-ui/icons"
+import { Add, Clear, Done } from "@material-ui/icons";
 
 interface ISvgIconProps {
   icon: "add" | "clear" | "done";
@@ -17,7 +17,7 @@ const clickableStyle = {
 };
 
 const SvgIcon = ({ icon, clickable }: ISvgIconProps) => {
-  const style = clickable ? clickableStyle : defaultStyle
+  const style = clickable ? clickableStyle : defaultStyle;
 
   if (icon === "add") {
     return <Add style={style} />;
@@ -28,6 +28,6 @@ const SvgIcon = ({ icon, clickable }: ISvgIconProps) => {
   if (icon === "done") {
     return <Done style={style} />;
   }
-}
+};
 
 export default SvgIcon;
