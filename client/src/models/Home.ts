@@ -3,7 +3,7 @@ import { types, flow } from "mobx-state-tree";
 import EnigmaTransaction from "./EnigmaTransaction";
 import web3Store from "../stores/web3";
 import enigmaStore from "../stores/enigma";
-import { getDatasetsInfo, rawUint256ToStr } from "../utils";
+import { rawUint256ToStr } from "../utils";
 
 const Model = types
   .model("Home", {
