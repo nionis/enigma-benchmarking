@@ -1,4 +1,4 @@
-# Enigma - Secret Benchmarking _WIP_
+# Enigma - Secret Benchmarking
 
 ## Implementation Details
 
