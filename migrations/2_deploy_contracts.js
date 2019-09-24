@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const Web3 = require('web3');
 const dotenv = require('dotenv');
-// const Sample = artifacts.require('Sample.sol');
 const { Enigma, utils, eeConstants } = require('enigma-js/node');
 
 dotenv.config({ path: path.resolve(process.cwd(), '..', '.env') });
@@ -23,6 +22,7 @@ const provider = new Web3.providers.HttpProvider('http://localhost:9545');
 const web3 = new Web3(provider);
 var enigma = null;
 
+// promisified timeout
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -71,7 +71,6 @@ async function deploySecretContract(config) {
 
 module.exports = async function (deployer, network, accounts) {
   const [owner] = accounts
-  const enigmaAddr = EnigmaContract.networks['4447'].address
 
   enigma = new Enigma(
     web3,
@@ -85,12 +84,6 @@ module.exports = async function (deployer, network, accounts) {
     },
   );
   enigma.admin();
-
-  // // Deploy your Smart and Secret contracts below this point:
-  // await deployer.deploy(Sample).then(function () {
-  //   console.log(`Smart Contract "Sample.Sol" has been deployed at ETH address: ${Sample.address}`);
-  //   return;
-  // });
 
   const secretConfig = {
     filename: 'benchmarking.wasm',

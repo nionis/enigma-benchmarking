@@ -1,3 +1,6 @@
+/*
+  A store to initialize web3 and keep track of wallet data.
+*/
 import Web3 from "web3";
 import { types, flow } from "mobx-state-tree";
 import getWeb3 from "./getWeb3";

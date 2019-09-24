@@ -1,7 +1,9 @@
 import Web3 from "web3";
 
+// check if page was rendered on server
 export const isSSR = typeof window === "undefined";
 
+// promisified interval that waits for promise either resolve or reject
 export const setIntervalAsync = (fn: () => Promise<any>, ms: number) => {
   const t = setTimeout(() => {
     fn().finally(() => {
@@ -11,6 +13,7 @@ export const setIntervalAsync = (fn: () => Promise<any>, ms: number) => {
   }, ms);
 };
 
+// promisified timeout
 export const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
@@ -20,6 +23,7 @@ export const rawAddrToStr = (raw: string) =>
 export const rawUint256ToStr = (raw: string) => String(parseInt(raw, 16));
 export const rawHexToStr = (raw: string) => Web3.utils.hexToString(`0x${raw}`);
 
+// parse tuple datasetInfo data retrived by calling `get_datasets_info()`
 export const getDatasetsInfo = (output: string) => {
   const rawOutput = output.match(/.{1,64}/g);
   const trimmedLeft = rawOutput.splice(3, rawOutput.length);

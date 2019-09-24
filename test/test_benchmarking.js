@@ -1,6 +1,5 @@
 const fs = require('fs');
 const Web3 = require('web3');
-// const SampleContract = artifacts.require("Sample");
 const { Enigma, utils, eeConstants } = require('enigma-js/node');
 
 const provider = new Web3.providers.HttpProvider('http://localhost:9545');
@@ -17,12 +16,14 @@ if (typeof process.env.SGX_MODE === 'undefined' || (process.env.SGX_MODE != 'SW'
 }
 const EnigmaTokenContract = require('../build/enigma_contracts/EnigmaToken.json');
 
+// promisified timeout
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 let enigma = null;
 
+// computes task and returns decrypted result
 const compute = async ({ fn, args, userAddr, contractAddr, expectFail }) => {
   let task = await new Promise((resolve, reject) => {
     enigma.computeTask(fn, args, 10000000, utils.toGrains(1), userAddr, contractAddr)
@@ -54,10 +55,10 @@ const compute = async ({ fn, args, userAddr, contractAddr, expectFail }) => {
   return enigma.decryptTaskResult(result);
 }
 
-const rawAddrToStr = raw => web3.utils.toChecksumAddress(`0x${raw.slice(24, 64)}`);
 const rawUint256ToStr = raw => String(parseInt(raw, 16));
 const rawHexToStr = raw => web3.utils.hexToString(`0x${raw}`);
 
+// parse tuple datasetInfo data retrived by calling `get_datasets_info()`
 const getDatasetsInfo = output => {
   const rawOutput = output.match(/.{1,64}/g);
   const trimmedLeft = rawOutput.splice(3, rawOutput.length);
@@ -96,7 +97,7 @@ contract("benchmarking", accounts => {
     secretContractAddr = fs.readFileSync('test/benchmarking.txt', 'utf-8');
   });
 
-  // NOTE: helps with race-condition causing tests to fail
+  // helps with race-condition causing tests to fail
   beforeEach("sleep", async () => {
     await sleep(2000);
   });

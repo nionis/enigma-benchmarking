@@ -1,3 +1,6 @@
+/*
+  A model to keep track of a transaction
+*/
 import { types, flow } from "mobx-state-tree";
 import { utils, eeConstants } from 'enigma-js/node'
 import { sleep } from "../utils"

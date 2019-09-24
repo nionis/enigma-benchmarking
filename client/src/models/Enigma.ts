@@ -1,6 +1,10 @@
+/*
+  A store to initialize enigma.
+*/
 import { types, flow } from "mobx-state-tree";
 import web3Store from "../stores/web3";
 import { isSSR } from "../utils";
+import * as env from "../env"
 
 const Model = types
   .model("Enigma", {
@@ -33,7 +37,8 @@ const Model = types
       if (isSSR) return;
       if (!web3Store.isLoggedIn) return;
 
-      const [Enigma, EnigmaContract, EnigmaTokenContract] = yield Promise.all([
+      // dynamically load enigma-js
+      const [Enigma, EnigmaContract, EnigmaTokenContract] = (yield Promise.all([
         import("enigma-js").then(d => d.Enigma),
         import("../../../build/enigma_contracts/EnigmaSimulation.json").then(
           d => d.default
@@ -41,21 +46,22 @@ const Model = types
         import("../../../build/enigma_contracts/EnigmaToken.json").then(
           d => d.default
         )
-      ]);
+      ])) as any[];
+
+      if (!EnigmaContract.networks[web3Store.networkId] || !EnigmaTokenContract.networks[web3Store.networkId]) {
+        throw Error("contract address not found in this network");
+      }
 
       self.enigmaAddress = EnigmaContract.networks[web3Store.networkId].address;
       self.enigmaTokenAddress =
         EnigmaTokenContract.networks[web3Store.networkId].address;
-      // FIXME: where can I get this from other than text/benchmarking.txt
-      self.enigmaContractAddress =
-        "0x88987af7d35eabcad95915b93bfd3d2bc3308f06b7197478b0dfca268f0497dc";
+      self.enigmaContractAddress = env.enigmaContractAddress;
 
       const enigma = new Enigma(
         web3Store.getWeb3(),
         EnigmaContract.networks[web3Store.networkId].address,
         EnigmaTokenContract.networks[web3Store.networkId].address,
-        // FIXME: dynamic url
-        "http://172.17.186.37:3346",
+        env.enigmaUrl,
         {
           gas: 4712388,
           gasPrice: 100000000000,
