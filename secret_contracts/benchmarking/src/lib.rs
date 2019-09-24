@@ -8,16 +8,25 @@
 
 extern crate eng_wasm;
 extern crate eng_wasm_derive;
+extern crate rustc_hex;
 extern crate serde;
 extern crate serde_derive;
 extern crate std;
 
 use eng_wasm::*;
-use eng_wasm_derive::pub_interface;
+use eng_wasm_derive::{pub_interface, eth_contract};
+use rustc_hex::ToHex;
 use serde::{Deserialize, Serialize};
 
+static REGISTRY: &str = "REGISTRY";
 static DATASETS_LENGTH: &str = "DATASETS_LENGTH";
 static DATASET: &str = "DATASET_"; // dynamically generated afterwards "DATASET_<ID>"
+
+// registry
+#[derive(Serialize, Deserialize)]
+pub struct Registry {
+  address: H160,
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct DataPoint {
@@ -28,13 +37,14 @@ pub struct DataPoint {
 #[derive(Serialize, Deserialize)]
 pub struct DataSet {
   id: U256,
-  name: H256,
+  name: String,
   datapoints: Vec<DataPoint>,
 }
 
-type DataSetsInfo = (Vec<U256>, Vec<H256>);
-
 pub struct Contract;
+
+#[eth_contract("Registry.json")]
+struct EthContract;
 
 // returns a DataSet state key, ex: "DATASET_1"
 fn create_dataset_key(id: U256) -> String {
@@ -44,8 +54,22 @@ fn create_dataset_key(id: U256) -> String {
   return key;
 }
 
+// add prefix "0x" to address string
+fn h160_to_string(address: H160) -> String {
+  let addr_str: String = address.to_hex();
+
+  return [String::from("0x"), addr_str].concat();
+}
+
 // secret fns
 impl Contract {
+  fn get_registry() -> Registry {
+    match read_state!(REGISTRY) {
+      Some(registry) => registry,
+      None => panic!("registry should already exist"),
+    }
+  }
+
   fn get_dataset(id: U256) -> DataSet {
     let key = &create_dataset_key(id);
 
@@ -58,13 +82,20 @@ impl Contract {
 
 #[pub_interface]
 pub trait ContractInterface {
+  fn construct(registry_addr: H160) -> ();
   fn get_datasets_length() -> U256;
-  fn get_datasets_info() -> DataSetsInfo;
-  fn add_dataset(name: H256, ids: Vec<U256>, rates: Vec<U256>) -> ();
+  fn add_dataset(name: String, ids: Vec<U256>, rates: Vec<U256>) -> ();
   fn calc_percentile(id: U256, rate: U256) -> U256;
 }
 
 impl ContractInterface for Contract {
+  #[no_mangle]
+  fn construct(registry_addr: H160) -> () {
+    write_state!(REGISTRY => Registry {
+      address: registry_addr
+    });
+  }
+
   #[no_mangle]
   fn get_datasets_length() -> U256 {
     match read_state!(DATASETS_LENGTH) {
@@ -74,26 +105,8 @@ impl ContractInterface for Contract {
   }
 
   #[no_mangle]
-  fn get_datasets_info() -> DataSetsInfo {
-    let datasets_length = Self::get_datasets_length();
-    let mut ids: Vec<U256> = Vec::new();
-    let mut names: Vec<H256> = Vec::new();
-
-    for n in 0..U256::as_usize(&datasets_length) {
-      let dataset = Self::get_dataset(U256::from(n + 1));
-
-      ids.push(dataset.id);
-      names.push(dataset.name);
-    }
-
-    return (
-      ids,
-      names
-    );
-  }
-
-  #[no_mangle]
-  fn add_dataset(name: H256, ids: Vec<U256>, rates: Vec<U256>) -> () {
+  fn add_dataset(name: String, ids: Vec<U256>, rates: Vec<U256>) -> () {
+    let registry_data = Self::get_registry();
     let datasets_length = Self::get_datasets_length();
     let id = datasets_length.checked_add(U256::from(1)).unwrap();
     let key = &create_dataset_key(id);
@@ -113,11 +126,15 @@ impl ContractInterface for Contract {
       })
     }
 
+    // register dataset
+    let registry = EthContract::new(&h160_to_string(registry_data.address));
+    registry.addDataset(id, name.clone());
+
     write_state!(
       DATASETS_LENGTH => id,
       key => DataSet {
         id: id,
-        name: name,
+        name: name.clone(),
         datapoints: datapoints
       }
     );

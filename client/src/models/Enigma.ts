@@ -4,7 +4,7 @@
 import { types, flow } from "mobx-state-tree";
 import web3Store from "../stores/web3";
 import { isSSR } from "../utils";
-import * as env from "../env"
+import * as env from "../env";
 
 const Model = types
   .model("Enigma", {
@@ -32,23 +32,54 @@ const Model = types
       }
     };
   })
+  .actions(self => {
+    let registry: any | undefined;
+
+    return {
+      _getRegistry() {
+        return registry;
+      },
+      getRegistry() {
+        if (!registry) {
+          throw Error("registry not initialized");
+        }
+
+        return registry;
+      },
+      setRegistry(_registry: any) {
+        registry = _registry;
+      }
+    };
+  })
   .actions(self => ({
-    init: flow(function* () {
+    init: flow(function*() {
       if (isSSR) return;
       if (!web3Store.isLoggedIn) return;
+      const web3 = web3Store.getWeb3();
 
-      // dynamically load enigma-js
-      const [Enigma, EnigmaContract, EnigmaTokenContract] = (yield Promise.all([
+      // dynamically load enigma-js and contract definitions
+      const [
+        Enigma,
+        EnigmaContract,
+        EnigmaTokenContract,
+        RegistryContract
+      ] = (yield Promise.all([
         import("enigma-js").then(d => d.Enigma),
         import("../../../build/enigma_contracts/EnigmaSimulation.json").then(
           d => d.default
         ),
         import("../../../build/enigma_contracts/EnigmaToken.json").then(
           d => d.default
+        ),
+        import("../../../build/smart_contracts/Registry.json").then(
+          d => d.default
         )
       ])) as any[];
 
-      if (!EnigmaContract.networks[web3Store.networkId] || !EnigmaTokenContract.networks[web3Store.networkId]) {
+      if (
+        !EnigmaContract.networks[web3Store.networkId] ||
+        !EnigmaTokenContract.networks[web3Store.networkId]
+      ) {
         throw Error("contract address not found in this network");
       }
 
@@ -58,9 +89,9 @@ const Model = types
       self.enigmaContractAddress = env.enigmaContractAddress;
 
       const enigma = new Enigma(
-        web3Store.getWeb3(),
-        EnigmaContract.networks[web3Store.networkId].address,
-        EnigmaTokenContract.networks[web3Store.networkId].address,
+        web3,
+        self.enigmaAddress,
+        self.enigmaTokenAddress,
         env.enigmaUrl,
         {
           gas: 4712388,
@@ -72,8 +103,13 @@ const Model = types
       enigma.admin();
 
       self.setEnigma(enigma);
+      self.setRegistry(
+        new web3.eth.Contract(RegistryContract.abi, env.registryAddress)
+      );
+
       self.isInstalled = true;
       console.log("Enigma Initialized");
+      console.log("Registry Initialized");
     })
   }));
 

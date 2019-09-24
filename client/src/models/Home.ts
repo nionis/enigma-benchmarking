@@ -1,17 +1,18 @@
-import Router from 'next/router'
-import { types, flow } from "mobx-state-tree"
-import EnigmaTransaction from "./EnigmaTransaction"
-import web3Store from "../stores/web3"
-import enigmaStore from "../stores/enigma"
-import { getDatasetsInfo, rawUint256ToStr } from "../utils"
+import Router from "next/router";
+import { types, flow } from "mobx-state-tree";
+import EnigmaTransaction from "./EnigmaTransaction";
+import web3Store from "../stores/web3";
+import enigmaStore from "../stores/enigma";
+import { getDatasetsInfo, rawUint256ToStr } from "../utils";
 
-const Model = types.model("Home", {
-  datasets: types.map(types.string),
-  selected: types.maybeNull(types.string),
-  rate: types.maybeNull(types.string),
-  getNamesTx: types.optional(EnigmaTransaction, {}),
-  calcPercentileTx: types.optional(EnigmaTransaction, {}),
-})
+const Model = types
+  .model("Home", {
+    datasets: types.map(types.string),
+    selected: types.maybeNull(types.string),
+    rate: types.maybeNull(types.string),
+    getNamesTx: types.optional(EnigmaTransaction, {}),
+    calcPercentileTx: types.optional(EnigmaTransaction, {})
+  })
   .views(self => ({
     get ids() {
       return Array.from(self.datasets.keys());
@@ -20,39 +21,41 @@ const Model = types.model("Home", {
       return Array.from(self.datasets.values());
     },
     get canCalcPercentile() {
-      return (
-        self.selected &&
-        self.rate &&
-        self.rate.length > 0
-      );
+      return self.selected && self.rate && self.rate.length > 0;
     }
   }))
   .actions(self => ({
-    getNames: flow(function* () {
-      let result;
+    getNames: flow(function*() {
+      const registry = enigmaStore.getRegistry();
 
-      try {
-        result = yield self.getNamesTx.run(enigmaStore.getEnigma(), {
-          fn: "get_datasets_info()",
-          args: "",
-          userAddr: web3Store.account,
-          contractAddr: enigmaStore.enigmaContractAddress
+      const length = yield registry.methods
+        .getDatasetsLength()
+        .call()
+        .then(v => Number(v.toString()));
+
+      const datasets: any[] = yield Promise.all(
+        Array.from(Array(length)).map((v, i) => {
+          return registry.methods
+            .datasets(i)
+            .call()
+            .then(res => ({
+              id: res.id,
+              name: res.name
+            }));
         })
-      } catch (err) {
-        return;
-      }
-
-      const { ids, names } = getDatasetsInfo(result.decryptedOutput);
+      );
 
       self.datasets.clear();
 
-      ids.forEach((id, index) => {
-        self.datasets.set(id, names[index]);
-      })
+      datasets.forEach(({ id, name }) => {
+        self.datasets.set(id, name);
+      });
 
-      self.selected = ids[0];
+      if (datasets.length) {
+        self.selected = datasets[0].id;
+      }
     }),
-    calcPercentile: flow(function* () {
+    calcPercentile: flow(function*() {
       const { selected, rate } = self;
 
       let result;
@@ -60,13 +63,10 @@ const Model = types.model("Home", {
       try {
         result = yield self.calcPercentileTx.run(enigmaStore.getEnigma(), {
           fn: "calc_percentile(uint256, uint256, uint256)",
-          args: [
-            [selected, "uint256"],
-            [rate, "uint256"]
-          ],
+          args: [[selected, "uint256"], [rate, "uint256"]],
           userAddr: web3Store.account,
           contractAddr: enigmaStore.enigmaContractAddress
-        })
+        });
       } catch (err) {
         return;
       }
@@ -74,13 +74,14 @@ const Model = types.model("Home", {
       const percentile = rawUint256ToStr(result.decryptedOutput);
 
       yield Router.push({
-        pathname: '/result', query: {
+        pathname: "/result",
+        query: {
           name: self.datasets.get(selected),
           rate,
           percentile
         }
-      })
+      });
     })
-  }))
+  }));
 
-export default Model
+export default Model;
