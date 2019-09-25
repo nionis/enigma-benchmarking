@@ -26,7 +26,7 @@ const Model = types
   }))
   .actions(self => ({
     getNames: flow(function*() {
-      const registry = enigmaStore.getRegistry();
+      const registry: any = yield web3Store.getContract("Registry");
 
       const length = yield registry.methods
         .getDatasetsLength()

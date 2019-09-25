@@ -99,10 +99,13 @@ const Model = types
       self.networkId = networkId;
     }),
 
-    getContract(name: Parameters<typeof getContract>["1"]) {
+    getContract(name: Parameters<typeof getContract>["1"], address?: string) {
       const web3 = self.getWeb3();
 
-      return getContract(web3, name, self.networkId);
+      return getContract(web3, name, {
+        networkId: self.networkId,
+        address
+      });
     }
   }));
 

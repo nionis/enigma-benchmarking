@@ -7,7 +7,13 @@ const definitions = {
 const getContract = async (
   web3: Web3,
   name: keyof typeof definitions,
-  networkId: number
+  {
+    networkId,
+    address
+  }: {
+    networkId: number;
+    address?: string;
+  }
 ) => {
   const definition =
     definitions[name] ||
@@ -23,7 +29,7 @@ const getContract = async (
 
   const contract = new web3.eth.Contract(
     definition.abi,
-    definition.networks[networkId].address
+    address ? address : definition.networks[networkId].address
   );
 
   return contract;

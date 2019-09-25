@@ -32,25 +32,6 @@ const Model = types
       }
     };
   })
-  .actions(self => {
-    let registry: any | undefined;
-
-    return {
-      _getRegistry() {
-        return registry;
-      },
-      getRegistry() {
-        if (!registry) {
-          throw Error("registry not initialized");
-        }
-
-        return registry;
-      },
-      setRegistry(_registry: any) {
-        registry = _registry;
-      }
-    };
-  })
   .actions(self => ({
     init: flow(function*() {
       if (isSSR) return;
@@ -70,8 +51,7 @@ const Model = types
         ),
         import("../../../build/enigma_contracts/EnigmaToken.json").then(
           d => d.default
-        ),
-        web3Store.getContract("Registry")
+        )
       ])) as any[];
 
       if (
@@ -101,11 +81,9 @@ const Model = types
       enigma.admin();
 
       self.setEnigma(enigma);
-      self.setRegistry(registry);
 
       self.isInstalled = true;
       console.log("Enigma Initialized");
-      console.log("Registry Initialized");
     })
   }));
 
