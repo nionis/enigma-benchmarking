@@ -76,8 +76,6 @@ const Model = types
         )
       ])) as any[];
 
-      console.log({ networkId: web3Store.networkId });
-
       if (
         !EnigmaContract.networks[web3Store.networkId] ||
         !EnigmaTokenContract.networks[web3Store.networkId]

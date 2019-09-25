@@ -2,14 +2,16 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import SvgIcon from "./SvgIcon";
 const MetaMask = dynamic(() => import("./MetaMask"));
+import { isSSR } from "../utils";
 
 interface IHeaderProps {
-  path?: string;
+  path: string;
 }
 
 const Header = ({ path }: IHeaderProps) => {
   const isHomepage = path === "/";
   const isResult = path.startsWith("/result");
+  const showMetamask = !isResult || (!isSSR && !isResult);
 
   return (
     <div className="header">
@@ -21,7 +23,7 @@ const Header = ({ path }: IHeaderProps) => {
           style={{ cursor: "pointer" }}
         />
       </Link>
-      {!isResult ? <MetaMask /> : null}
+      {showMetamask ? <MetaMask /> : null}
       <Link href={isHomepage ? `/upload` : `/`} prefetch>
         <div className="svgIconContainer">
           <SvgIcon clickable={true} icon={isHomepage ? "add" : "clear"} />
