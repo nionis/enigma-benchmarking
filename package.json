@@ -5,8 +5,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^2.3.0",
     "dotenv": "^8.0.0",
-    "enigma-js": "^0.0.8",
-    "web3": "^1.2.1"
+    "enigma-js": "^0.0.8"
   },
   "devDependencies": {},
   "author": "",

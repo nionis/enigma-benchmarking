@@ -4,6 +4,7 @@
 import Web3 from "web3";
 import { types, flow } from "mobx-state-tree";
 import getWeb3 from "./getWeb3";
+import getContract from "./getContract";
 import { isSSR } from "../../utils";
 
 const Model = types
@@ -96,7 +97,13 @@ const Model = types
 
       self.account = accounts[0] || null;
       self.networkId = networkId;
-    })
+    }),
+
+    getContract(name: Parameters<typeof getContract>["1"]) {
+      const web3 = self.getWeb3();
+
+      return getContract(web3, name, self.networkId);
+    }
   }));
 
 export default Model;

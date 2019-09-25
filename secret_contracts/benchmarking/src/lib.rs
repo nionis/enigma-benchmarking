@@ -18,6 +18,7 @@ use eng_wasm_derive::{pub_interface, eth_contract};
 use rustc_hex::ToHex;
 use serde::{Deserialize, Serialize};
 
+// private state keys
 static REGISTRY: &str = "REGISTRY";
 static DATASETS_LENGTH: &str = "DATASETS_LENGTH";
 static DATASET: &str = "DATASET_"; // dynamically generated afterwards "DATASET_<ID>"
@@ -88,6 +89,7 @@ pub trait ContractInterface {
   fn calc_percentile(id: U256, rate: U256) -> U256;
 }
 
+// public fns
 impl ContractInterface for Contract {
   #[no_mangle]
   fn construct(registry_addr: H160) -> () {
