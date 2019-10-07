@@ -24,11 +24,13 @@
     "web3": "^1.2.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^9.0.5",
     "@types/node": "^12.7.1",
     "@types/react": "^16.8.25",
-    "typescript": "^3.5.3",
-    "@next/bundle-analyzer": "^9.0.5",
     "@types/react-dropzone": "^5.1.0",
-    "@types/web3": "^1.0.19"
+    "@types/web3": "^1.0.19",
+    "dotenv": "^8.1.0",
+    "dotenv-expand": "^5.1.0",
+    "typescript": "^3.5.3"
   }
 }
