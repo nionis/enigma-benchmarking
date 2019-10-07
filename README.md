@@ -11,9 +11,11 @@
 
 ### Secret Contracts
 1. `npm install`
-2. `discovery compile`
-3. `discovery start`
-4. once started: `discovery migrate`
+2. rename `.env-default` to `.env`
+3. modify `.env` "BUILD_CONTRACTS_PATH"
+4. `discovery compile`
+5. `discovery start`
+6. once started: `discovery migrate`
 
 ### Client
 1. `cd client`
