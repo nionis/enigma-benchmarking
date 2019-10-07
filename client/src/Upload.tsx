@@ -17,23 +17,16 @@ const MyDropzone = observer(() => {
     uploadStore.setFile(file);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    onDropRejected: uploadStore.dropRejected,
+    multiple: false,
     accept: "application/json, .csv"
   });
 
-  const fileSuccess =
-    uploadStore.input_status === "ACCEPTED" ||
-    uploadStore.reader_status === "ACCEPTED";
-
-  const failure =
-    uploadStore.input_status === "REJECTED" ||
-    uploadStore.reader_status === "REJECTED" ||
-    uploadStore.transaction.status === "FAILURE";
-
   const borderColor = (() => {
-    if (fileSuccess) return "green";
-    if (failure) return "red";
+    if (uploadStore.fileSuccess) return "green";
+    if (uploadStore.failure) return "red";
 
     return "rgba(255, 255, 255, 0.51)";
   })();
@@ -109,14 +102,14 @@ const MyDropzone = observer(() => {
 const Upload = observer(() => (
   <div className="container">
     <div className="body">
-      <div className="title">Upload Data</div>
+      <div className="title">Add Task Dataset</div>
       <TextInput
-        label="Data Title"
+        label="Task Name"
         value={uploadStore.name}
         onChange={e => uploadStore.setName(e.target.value)}
       />
-      <div className="text">Import a File</div>
-      <div className="smallText">({AcceptedFormatsList.join(", ")})</div>
+      <div className="text">Import (json, csv)</div>
+      {/* <div className="smallText">({AcceptedFormatsList.join(", ")})</div> */}
       <div className="middle">
         <div className="side" />
         <MyDropzone />
@@ -139,6 +132,10 @@ const Upload = observer(() => (
           </a>
         </div>
       </div>
+      {uploadStore.failure ? <p>invalid file</p> : null}
+      {uploadStore.transaction.status === "SUCCESS" ? (
+        <p>upload successful</p>
+      ) : null}
     </div>
     <Button
       onClick={uploadStore.upload}

@@ -17,14 +17,13 @@ const Result = ({ name = "", rate = "0", percentile = "0" }: IQueryData) => {
           <div className="percentile" />
         </div>
         <div className="title">
-          Your quote is in the {getNumberWithOrdinal(Number(percentile))}{" "}
-          percentile
+          Your quote is more expensive than {percentile}% of other quotes.
         </div>
 
         <div className="quoteInfo">
           {" "}
           <div className="text">{name}</div>
-          <div className="text">input: {rate}</div>
+          <div className="text">rate: {rate}</div>
         </div>
       </div>
       <Link href={`/`} prefetch>

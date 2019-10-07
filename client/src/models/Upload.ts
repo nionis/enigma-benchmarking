@@ -73,48 +73,68 @@ const Model = types
         self.input_status === "ACCEPTED" &&
         self.reader_status === "ACCEPTED"
       );
+    },
+    get fileSuccess() {
+      return (
+        self.input_status === "ACCEPTED" || self.reader_status === "ACCEPTED"
+      );
+    },
+    get failure() {
+      return (
+        self.input_status === "REJECTED" ||
+        self.reader_status === "REJECTED" ||
+        self.transaction.status === "FAILURE"
+      );
     }
   }))
   .actions(self => ({
     setName(name: string) {
       self.name = name;
     },
+    dropRejected() {
+      self.input_status = "REJECTED";
+    },
     setFile: flow(function*(file: FileWithPath) {
-      self.input_status = "PENDING";
-      self.reader_status = "PENDING";
+      try {
+        self.input_status = "PENDING";
+        self.reader_status = "PENDING";
 
-      const ext: any = file.path
-        .substr(file.path.lastIndexOf("\\") + 1)
-        .split(".")[1];
+        const ext: any = file.path
+          .substr(file.path.lastIndexOf("\\") + 1)
+          .split(".")[1];
 
-      // is input ok
-      if (!AcceptedFormatsList.includes(ext)) {
-        self.input_status = "REJECTED";
-        return;
-      }
-      self.input_status = "ACCEPTED";
+        // is input ok
+        if (!AcceptedFormatsList.includes(ext)) {
+          self.input_status = "REJECTED";
+          return;
+        }
+        self.input_status = "ACCEPTED";
 
-      // store file
-      if (!(yield storeAsJSON(file, ext))) {
+        // store file
+        if (!(yield storeAsJSON(file, ext))) {
+          self.reader_status = "REJECTED";
+          return;
+        }
+
+        // validate file
+        const okLength = fileContents.length <= 1000;
+        const okValues = fileContents.every(
+          o =>
+            o.ids && !isNaN(Number(o.ids)) && o.rates && !isNaN(Number(o.rates))
+        );
+        if (!okLength || !okValues) {
+          self.reader_status = "REJECTED";
+          return;
+        }
+
+        self.reader_status = "ACCEPTED";
+
+        if (self.name === "") {
+          self.name = file.name;
+        }
+      } catch (err) {
+        console.error(err);
         self.reader_status = "REJECTED";
-        return;
-      }
-
-      // validate file
-      const okLength = fileContents.length <= 1000;
-      const okValues = fileContents.every(
-        o =>
-          o.ids && !isNaN(Number(o.ids)) && o.rates && !isNaN(Number(o.rates))
-      );
-      if (!okLength || !okValues) {
-        self.reader_status = "REJECTED";
-        return;
-      }
-
-      self.reader_status = "ACCEPTED";
-
-      if (self.name === "") {
-        self.name = file.name;
       }
     }),
     upload: flow(function*() {

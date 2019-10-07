@@ -24,7 +24,7 @@ const SelectInput = ({
     >
       {options.ids.length === 0 ? (
         <option value="" disabled>
-          Please fetch tasks
+          No tasks found
         </option>
       ) : null}
       {options.ids.map((id, index) => (

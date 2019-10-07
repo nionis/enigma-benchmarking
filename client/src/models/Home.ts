@@ -26,33 +26,37 @@ const Model = types
   }))
   .actions(self => ({
     getNames: flow(function*() {
-      const registry: any = yield web3Store.getContract("Registry");
+      try {
+        const registry: any = yield web3Store.getContract("Registry");
 
-      const length = yield registry.methods
-        .getDatasetsLength()
-        .call()
-        .then(v => Number(v.toString()));
+        const length = yield registry.methods
+          .getDatasetsLength()
+          .call()
+          .then(v => Number(v.toString()));
 
-      const datasets: any[] = yield Promise.all(
-        Array.from(Array(length)).map((v, i) => {
-          return registry.methods
-            .datasets(i)
-            .call()
-            .then(res => ({
-              id: res.id,
-              name: res.name
-            }));
-        })
-      );
+        const datasets: any[] = yield Promise.all(
+          Array.from(Array(length)).map((v, i) => {
+            return registry.methods
+              .datasets(i)
+              .call()
+              .then(res => ({
+                id: res.id,
+                name: res.name
+              }));
+          })
+        );
 
-      self.datasets.clear();
+        self.datasets.clear();
 
-      datasets.forEach(({ id, name }) => {
-        self.datasets.set(id, name);
-      });
+        datasets.forEach(({ id, name }) => {
+          self.datasets.set(id, name);
+        });
 
-      if (datasets.length) {
-        self.selected = datasets[0].id;
+        if (datasets.length) {
+          self.selected = datasets[0].id;
+        }
+      } catch (err) {
+        console.error(err);
       }
     }),
     calcPercentile: flow(function*() {

@@ -1,3 +1,4 @@
+import { when } from "mobx";
 import { unprotect } from "mobx-state-tree";
 import { observer } from "mobx-react";
 import TextInput from "./components/TextInput";
@@ -9,23 +10,21 @@ import enigmaStore from "./stores/enigma";
 const homeStore = HomeModel.create();
 unprotect(homeStore);
 
+when(() => enigmaStore.isInstalled, homeStore.getNames);
+
 const Home = observer(() => (
   <div className="container">
     <div className="body">
-      <div className="title">Submit Your Quote</div>
-      <Button
+      <div className="title">Enigma Benchmarking</div>
+      {/* <Button
         onClick={homeStore.getNames}
         disabled={!enigmaStore.isInstalled}
         loading={homeStore.getNamesTx.status === "PENDING"}
-        undertext={
-          homeStore.getNamesTx.status === "FAILURE"
-            ? "Something went bad, please retry"
-            : ""
-        }
         style={{ width: "10vw", marginTop: "2vh" }}
       >
-        Fetch Tasks
-      </Button>
+        Refresh
+      </Button> */}
+
       <SelectInput
         label="Select Task"
         options={{
@@ -87,6 +86,7 @@ const Home = observer(() => (
         padding-right: 10vh;
         padding-top: 0;
         padding-bottom: 0;
+        min-height: 80vh;
       }
     `}</style>
   </div>
