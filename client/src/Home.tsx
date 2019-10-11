@@ -39,11 +39,18 @@ const Home = observer(() => (
         label="Rate"
         type="number"
         value={homeStore.rate || ""}
-        onChange={e => (homeStore.rate = e.target.value)}
+        step={1}
+        onChange={e =>
+          (homeStore.rate = String(Math.floor(Number(e.target.value))))
+        }
       />
     </div>
     <Button
-      disabled={!homeStore.canCalcPercentile || !enigmaStore.isInstalled}
+      disabled={
+        !homeStore.canCalcPercentile ||
+        !enigmaStore.isInstalled ||
+        homeStore.rate === "0"
+      }
       onClick={homeStore.calcPercentile}
       loading={homeStore.calcPercentileTx.status === "PENDING"}
       undertext={

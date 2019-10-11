@@ -5,7 +5,7 @@ import { ArrowDownward } from "@material-ui/icons";
 import { FileWithPath } from "file-selector";
 import TextInput from "./components/TextInput";
 import Button from "./components/Button";
-import UploadModel, { AcceptedFormatsList } from "./models/Upload";
+import UploadModel from "./models/Upload";
 
 const uploadStore = UploadModel.create();
 
@@ -25,8 +25,8 @@ const MyDropzone = observer(() => {
   });
 
   const borderColor = (() => {
-    if (uploadStore.fileSuccess) return "green";
     if (uploadStore.failure) return "red";
+    if (uploadStore.fileSuccess) return "green";
 
     return "rgba(255, 255, 255, 0.51)";
   })();
@@ -109,7 +109,6 @@ const Upload = observer(() => (
         onChange={e => uploadStore.setName(e.target.value)}
       />
       <div className="text">Import (json, csv)</div>
-      {/* <div className="smallText">({AcceptedFormatsList.join(", ")})</div> */}
       <div className="middle">
         <div className="side" />
         <MyDropzone />
@@ -132,7 +131,9 @@ const Upload = observer(() => (
           </a>
         </div>
       </div>
-      {uploadStore.failure ? <p>invalid file</p> : null}
+      {uploadStore.failure ? (
+        <p>{uploadStore.errorMsg || "invalid file"}</p>
+      ) : null}
       {uploadStore.transaction.status === "SUCCESS" ? (
         <p>upload successful</p>
       ) : null}

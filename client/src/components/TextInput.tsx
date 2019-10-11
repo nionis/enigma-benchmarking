@@ -2,16 +2,24 @@ interface ITextInput {
   label: string;
   value?: string;
   type?: "text" | "number";
+  step?: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TextInput = ({ label, type = "text", value, onChange }: ITextInput) => (
+const TextInput = ({
+  label,
+  value,
+  type = "text",
+  step,
+  onChange
+}: ITextInput) => (
   <div className="textInput">
     <div className="label">{label}</div>
     <input
       className="text"
       name="address"
       type={type}
+      step={type === "number" ? step : undefined}
       value={value}
       onChange={onChange}
     />

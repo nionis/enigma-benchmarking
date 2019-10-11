@@ -61,6 +61,7 @@ const Model = types
       types.enumeration(["ACCEPTED", "REJECTED", "PENDING"]),
       "PENDING"
     ),
+    errorMsg: "",
     name: "",
     fileExtension: types.maybeNull(types.enumeration(AcceptedFormatsList)),
     transaction: types.optional(EnigmaTransaction, {})
@@ -98,6 +99,7 @@ const Model = types
       try {
         self.input_status = "PENDING";
         self.reader_status = "PENDING";
+        self.errorMsg = "";
 
         const ext: any = file.path
           .substr(file.path.lastIndexOf("\\") + 1)
@@ -118,12 +120,29 @@ const Model = types
 
         // validate file
         const okLength = fileContents.length <= 1000;
-        const okValues = fileContents.every(
-          o =>
-            o.ids && !isNaN(Number(o.ids)) && o.rates && !isNaN(Number(o.rates))
-        );
-        if (!okLength || !okValues) {
+        if (!okLength) {
           self.reader_status = "REJECTED";
+          self.errorMsg = "dataset length is too large";
+          return;
+        }
+
+        const valuesAreNumbers = fileContents.every(o => {
+          return (
+            o.ids && !isNaN(Number(o.ids)) && o.rates && !isNaN(Number(o.rates))
+          );
+        });
+        if (!valuesAreNumbers) {
+          self.reader_status = "REJECTED";
+          self.errorMsg = "not all ids / rates are numbers";
+          return;
+        }
+
+        const valuesAreRounded = fileContents.every(o => {
+          return Number.isInteger(o.rates);
+        });
+        if (!valuesAreRounded) {
+          self.reader_status = "REJECTED";
+          self.errorMsg = "not all rates are rounded values";
           return;
         }
 
