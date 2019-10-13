@@ -1,5 +1,15 @@
 # Enigma - Secret Benchmarking
 
+## About
+
+[Enigma](https://enigma.co/) is a secure computation protocol, where “secret nodes” in our network perform computations over encrypted data. Enigma brings privacy to any kind of computation - not just transactions - helping to improve the adoption and usability of decentralized technologies.
+
+This application uses enigma's secret contracts and ethereum's smart contracts to allow users to submit datasets and compare their quotas privately.
+
+Key Features:
+* client enables to encrypt and transmit the dataset to the secret contract
+* client enables to encrypt and transmit the user’s quotas to the secret contract, receive the correct decrypted output
+
 ## Stack
 
 * next-js
